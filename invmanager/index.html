@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InvManager: inventario, compras, ventas y caja para pymes</title>
+<meta name="description" content="Programa de escritorio para Windows, gratis: inventario, compras, ventas, cobros y pagos e informes para pequeñas empresas de distribución y comercio.">
+<link rel="canonical" href="https://jorgeguardiola.es/invmanager/">
+<link rel="icon" href="icono.svg" type="image/svg+xml">
+<meta name="theme-color" content="#16357A">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Jorge Guardiola Tomás">
+<meta property="og:title" content="InvManager: inventario, compras, ventas y caja para pymes">
+<meta property="og:description" content="Qué hay, qué falta, qué pedir y cuándo se cobra, en un programa de escritorio para Windows. Gratis.">
+<meta property="og:url" content="https://jorgeguardiola.es/invmanager/">
+<meta property="og:image" content="https://jorgeguardiola.es/invmanager/media/compartir.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Pantalla de inicio de InvManager, con la empresa de demostración">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="fuentes/inter-latin-standard-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* InvManager con su propio aspecto: los colores, las letras y las piezas del programa.
+   Colores de FlatLightLaf.properties: «la paleta sale de una estantería de almacén: azul de los bastidores para la
+   estructura, naranja de los largueros para la acción principal y grises de acero galvanizado para todo lo demás».
+   Letras: Inter y JetBrains Mono, las dos que lleva el programa (flatlaf-fonts-inter y flatlaf-fonts-jetbrains-mono).
+   Fuentes: paquetes @fontsource-variable de npm (licencia OFL, junto a los ficheros). */
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fuentes/inter-latin-standard-normal.woff2") format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 100 800; font-display: swap; src: url("fuentes/jetbrains-mono-latin-wght-normal.woff2") format("woff2"); }
+:root {
+  --fondo: #F2F4F7;          /* Inv.fondo: acero galvanizado */
+  --superficie: #FFFFFF;     /* Inv.superficie */
+  --superficie-alt: #F6F8FA; /* Inv.superficieAlt */
+  --borde: #DEE3EA;          /* Inv.borde */
+  --borde-fuerte: #C4CBD6;   /* Inv.bordeFuerte */
+  --rejilla: #EBEEF2;        /* Table.gridColor */
+  --texto: #18202C;          /* Inv.texto */
+  --texto-suave: #586374;    /* Inv.textoSuave */
+  --texto-tenue: #8892A2;    /* Inv.textoTenue: solo iconos y adornos, no da contraste para leer */
+  --accion: #EC6316;         /* Inv.accion: los largueros */
+  --accion-hover: #D5540D;   /* Inv.accionHover */
+  --azul: #2F63D8;           /* Inv.azul y @accentColor */
+  --seleccion: #DCE7FC;      /* Table.selectionBackground */
+  --lateral: #16357A;        /* Inv.lateral: los bastidores */
+  --lateral-activo: #0F2860; /* Inv.lateralActivo */
+  --lateral-texto: #DFE7F8;  /* Inv.lateralTexto */
+  --lateral-tenue: #96AADA;  /* Inv.lateralTenue */
+  --carga: #9DB8F0;          /* Logo.java: la carga sobre el azul */
+  --ok: #17824F;             /* Inv.ok */
+  --neutro: #ECEFF3;         /* Inv.neutroFondo */
+  --oscuro: #161F2E;         /* Inv.superficie del tema oscuro */
+  --sans: "Inter", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", Consolas, monospace;
+  --margen: clamp(16px, 4vw, 48px);
+  --ancho: 1120px;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scrollbar-color: var(--borde-fuerte) var(--fondo); }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body { margin: 0; background: var(--fondo); color: var(--texto); font: 400 1.0625rem/1.6 var(--sans); caret-color: var(--azul); }
+::selection { background: var(--seleccion); color: var(--texto); }
+img { display: block; max-width: 100%; height: auto; }
+h1, h2, h3, p, ul, ol, dl, dd, figure { margin: 0; }
+h1, h2, h3 { text-wrap: balance; }
+p, li, dd { text-wrap: pretty; }
+a { color: var(--azul); text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: rgba(47, 99, 216, .45); }
+@media (hover: hover) { a:hover { text-decoration-color: currentColor; } }
+:focus-visible { outline: 2px solid var(--azul); outline-offset: 3px; border-radius: 4px; }
+.ico { width: 1.15em; height: 1.15em; flex: none; fill: currentColor; }
+.sprite { display: none; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.saltar { position: absolute; left: 16px; top: -60px; z-index: 10; padding: 10px 14px; border-radius: 8px; background: var(--superficie); color: var(--texto); font-weight: 600; }
+.saltar:focus { top: 12px; }
+.ancho { width: min(var(--ancho), 100% - 2 * var(--margen)); margin-inline: auto; }
+.literal { padding: .08em .38em .12em; border-radius: 4px; background: var(--neutro); font: 500 .88em/1 var(--mono); white-space: nowrap; }
+kbd { display: inline-block; padding: 2px 6px 1px; border: 1px solid var(--borde-fuerte); border-bottom-width: 2px; border-radius: 5px; background: var(--superficie); font: 600 .8em/1.3 var(--sans); }
+
+/* La franja azul de arriba: la barra de título y el lateral del programa */
+.arriba, .portada-azul { background: var(--lateral); color: #fff; }
+.arriba nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 16px; min-height: 72px; }
+.marca { display: inline-flex; align-items: center; gap: 10px; color: #fff; font: 650 1.125rem/1 var(--sans); letter-spacing: -.01em; text-decoration: none; }
+.marca svg { width: 25px; height: 30px; }
+.autor { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--lateral-texto); font: 500 .9375rem/1.2 var(--sans); text-decoration: none; white-space: nowrap; }
+/* En móviles estrechos el nombre no se parte: primero se quita la flecha y, si aún no cabe, baja a su propia línea */
+@media (max-width: 379.98px) { .autor .ico { display: none; } }
+@media (max-width: 339.98px) { .arriba nav { padding-block: 8px; } }
+.autor .ico { width: 18px; height: 18px; color: var(--lateral-tenue); }
+@media (hover: hover) { .autor:hover { color: #fff; text-decoration: underline; text-decoration-color: currentColor; } }
+.arriba :focus-visible, .portada-azul :focus-visible, .radiografia :focus-visible, .pie :focus-visible { outline-color: var(--carga); }
+
+.portada-azul { padding: clamp(28px, 6vw, 72px) 0 clamp(36px, 5vw, 64px); }
+.portada h1 { font: 640 clamp(2.5rem, 1.2rem + 4.2vw, 4.25rem)/1.04 var(--sans); letter-spacing: -.025em; }
+@media (min-width: 1100px) { .portada h1 .l { display: block; } }
+.entrada { max-width: 36em; margin-top: clamp(16px, 2vw, 24px); color: var(--lateral-texto); font-size: clamp(1.125rem, 1.04rem + .35vw, 1.3125rem); line-height: 1.5; }
+.acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; margin-top: clamp(24px, 3vw, 36px); }
+.descarga { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 0 26px 0 22px; border-radius: 8px; background: var(--accion); color: #fff; font: 700 1.1875rem/1 var(--sans); letter-spacing: -.005em; text-decoration: none; }
+.descarga .ico { width: 22px; height: 22px; }
+@media (hover: hover) { .descarga:hover { background: var(--accion-hover); } }
+.secundario { display: inline-flex; align-items: center; min-height: 44px; color: var(--lateral-texto); font-weight: 600; text-decoration-color: rgba(223, 231, 248, .5); }
+@media (hover: hover) { .secundario:hover { color: #fff; } }
+.requisitos { margin-top: 14px; color: var(--lateral-tenue); font-size: .9375rem; }
+
+/* La ventana del programa, a caballo entre la franja azul y el gris */
+.ventana { position: relative; isolation: isolate; }
+.ventana-marco { position: relative; }
+.ventana-marco::before { content: ""; position: absolute; inset: 0 0 45% 0; z-index: -1; background: var(--lateral); box-shadow: 0 0 0 100vmax var(--lateral); clip-path: inset(0 -100vmax); }
+.ventana img { width: 100%; border-radius: 8px; box-shadow: 0 0 0 1px rgba(157, 184, 240, .32), 0 2px 4px rgba(15, 40, 96, .2), 0 28px 56px -24px rgba(15, 40, 96, .55); }
+.ventana figcaption { margin-top: 14px; color: var(--texto-suave); font-size: .9375rem; line-height: 1.45; }
+
+/* Secciones */
+.seccion { padding-top: clamp(72px, 10vw, 128px); }
+.cabeza h2, .seccion h2 { font: 640 clamp(1.75rem, 1.3rem + 1.5vw, 2.5rem)/1.12 var(--sans); letter-spacing: -.022em; }
+.cabeza { max-width: 44rem; }
+.cabeza p, .texto p { margin-top: 14px; max-width: 62ch; }
+.cabeza p:first-of-type { color: var(--texto-suave); font-size: clamp(1.0625rem, 1rem + .25vw, 1.1875rem); line-height: 1.55; }
+.texto { max-width: 44rem; }
+.texto p:first-child { margin-top: 0; }
+.texto h2 + p { margin-top: 16px; }
+h3 { font: 640 1.25rem/1.25 var(--sans); letter-spacing: -.012em; }
+.subparte { margin-top: clamp(48px, 7vw, 80px); }
+.subparte h3 + p { margin-top: 12px; }
+.inicio .cabeza { margin-top: clamp(28px, 4vw, 44px); }
+
+/* Recortes de pantallas, a tamaño real */
+.captura { margin-top: clamp(28px, 4vw, 44px); }
+.marco { width: fit-content; max-width: 100%; overflow: hidden; border: 1px solid var(--borde); border-radius: 8px; background: var(--superficie); box-shadow: 0 1px 2px rgba(24, 32, 44, .05), 0 14px 30px -18px rgba(24, 32, 44, .32); }
+.marco.oscura { border-color: #26334A; background: var(--oscuro); }
+/* Recortes que ya traen su propia tarjeta sobre el gris del programa: van sueltos, sin otro marco */
+.marco.suelta { overflow: visible; border: 0; border-radius: 0; background: none; box-shadow: none; }
+.captura figcaption { margin-top: 12px; color: var(--texto-suave); font-size: .9375rem; line-height: 1.45; }
+@media (max-width: 979.98px) {
+  /* En pantallas estrechas las capturas anchas no se encogen hasta no leerse: se ven a tamaño real y se deslizan */
+  .desliza { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: var(--borde-fuerte) transparent; }
+  .desliza img { max-width: none; }
+  /* Que se note que la captura sigue: su borde derecho se funde hasta que se llega al final */
+  .desliza.desborda { display: flex; align-items: flex-start; }
+  .desliza.desborda img { flex: none; }
+  .desliza.desborda::after { content: ""; flex: none; align-self: stretch; position: sticky; right: 0; width: 48px; margin-left: -48px; background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, .94)); pointer-events: none; }
+  .desliza.oscura.desborda::after { background: linear-gradient(to right, rgba(22, 31, 46, 0), rgba(22, 31, 46, .94)); }
+  .desliza.desborda.al-final::after { visibility: hidden; }
+}
+
+/* El ciclo: un panel del programa, con sus iconos de menú, y flujos en ángulo recto */
+.ciclo .cabeza-ciclo { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 18px 40px; }
+.leyenda { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 22px; color: var(--texto-suave); font-size: .9375rem; }
+.leyenda span { display: inline-flex; align-items: center; gap: 9px; }
+.leyenda .linea { width: 26px; border-top: 2px solid var(--lateral); }
+.leyenda .linea.dinero { border-top-style: dashed; border-top-color: var(--ok); }
+.mapa-zona { container: mapa / inline-size; margin-top: clamp(28px, 4vw, 44px); }
+.mapa {
+  --g: 14px; --hueco: 32px; --nw: calc((100% - 2 * var(--g) - var(--hueco)) / 2); --nh: 96px;
+  --x1: calc(var(--g) + var(--nw) / 2); --l2: calc(50% + var(--hueco) / 2); --x2: calc(var(--l2) + var(--nw) / 2);
+  position: relative; max-width: 520px; height: 704px; margin-inline: auto;
+}
+.nodo { position: absolute; z-index: 1; display: flex; flex-direction: column; justify-content: center; gap: 4px; width: var(--nw); height: var(--nh); padding: 10px 12px; border: 1px solid var(--borde); border-radius: 8px; background: var(--superficie); box-shadow: 0 1px 2px rgba(24, 32, 44, .06); color: var(--texto); text-decoration: none; transition: background-color .15s, border-color .15s, opacity .15s; }
+.nodo-nombre { display: flex; align-items: flex-start; gap: 7px; font: 640 .875rem/1.25 var(--sans); letter-spacing: -.005em; }
+.nodo-nombre .ico { width: 17px; height: 17px; margin-top: 0; color: var(--lateral); }
+.nodo-linea { color: var(--texto-suave); font-size: .78125rem; line-height: 1.35; }
+.mapa .nodo:focus-visible { outline-offset: 2px; }
+@media (hover: hover) { .mapa .nodo:hover { border-color: var(--azul); background: var(--seleccion); } }
+.mapa .nodo:focus-visible, .mapa .nodo.activo { border-color: var(--azul); background: var(--seleccion); }
+.tramo { position: absolute; border: 0 solid currentColor; color: var(--lateral); transition: opacity .15s; }
+.tramo.dinero { color: var(--ok); border-style: dashed; }
+/* Flechas: cada tramo acaba en el paso al que llega (estrecho; el ancho cambia las que giran distinto) */
+.tramo::after { content: ""; position: absolute; width: 0; height: 0; border-style: solid; }
+.t-repo-compra::after, .t-previsto::after { top: -6px; right: 0; border-width: 5px 0 5px 9px; border-color: transparent transparent transparent currentColor; }
+.t-compra-recepcion::after, .t-ajusta::after, .t-sale::after { bottom: 0; left: -6px; border-width: 9px 5px 0; border-color: currentColor transparent transparent; }
+.t-entra::after, .t-pago::after { bottom: -6px; left: 0; border-width: 5px 9px 5px 0; border-color: transparent currentColor transparent transparent; }
+.t-venta-albaran::after { top: -6px; left: 0; border-width: 5px 9px 5px 0; border-color: transparent currentColor transparent transparent; }
+.t-cobro::after { bottom: -6px; right: 0; border-width: 5px 0 5px 9px; border-color: transparent transparent transparent currentColor; }
+.t-previsto-b::after { top: 0; left: -6px; border-width: 0 5px 9px; border-color: transparent transparent currentColor; }
+.rotulo { position: absolute; z-index: 2; display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px 3px 7px; border: 1px solid var(--borde); border-radius: 6px; background: var(--superficie); color: var(--texto-suave); font: 500 .8125rem/1.3 var(--sans); white-space: nowrap; transform: translate(-50%, -50%); transition: opacity .15s; }
+.rotulo::before { content: ""; width: 7px; height: 7px; border-radius: 2px; background: var(--lateral); }
+.rotulo.dinero::before { background: var(--ok); }
+.mapa.foco .tramo, .mapa.foco .rotulo { opacity: .18; }
+.mapa.foco .vivo { opacity: 1; }
+.mapa.foco .nodo:not(.activo):not(.vecino) { opacity: .55; }
+
+/* Estrecho: dos columnas, con la vuelta del stock por la izquierda y los pagos por la derecha */
+.n-reposicion { left: var(--g); top: 0; }
+.n-compra { left: var(--l2); top: 0; }
+.n-recuento { left: var(--g); top: 152px; }
+.n-recepcion { left: var(--l2); top: 152px; }
+.n-stock { left: var(--g); top: 304px; }
+.n-albaran { left: var(--g); top: 456px; }
+.n-venta { left: var(--l2); top: 456px; }
+.n-caja { left: var(--l2); top: 608px; }
+.t-repo-compra { left: calc(var(--g) + var(--nw)); top: 47px; width: var(--hueco); border-top-width: 2px; }
+.t-compra-recepcion { left: calc(var(--x2) - 1px); top: 96px; height: 56px; border-left-width: 2px; }
+.t-entra { left: calc(var(--g) + var(--nw)); top: 248px; width: calc(var(--nw) / 2 + var(--hueco) + 1px); height: 105px; border-right-width: 2px; border-bottom-width: 2px; border-bottom-right-radius: 10px; }
+.t-pago { left: calc(100% - var(--g)); top: 199px; width: 9px; height: 458px; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+.t-previsto { left: 5px; top: 47px; width: 9px; height: 306px; border-top-width: 2px; border-left-width: 2px; border-bottom-width: 2px; border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+.t-previsto-b { display: none; }
+.t-ajusta { left: calc(var(--x1) - 1px); top: 248px; height: 56px; border-left-width: 2px; }
+.t-sale { left: calc(var(--x1) - 1px); top: 400px; height: 56px; border-left-width: 2px; }
+.t-venta-albaran { left: calc(var(--g) + var(--nw)); top: 503px; width: var(--hueco); border-top-width: 2px; }
+.t-cobro { left: calc(var(--x1) - 1px); top: 552px; width: calc(var(--nw) / 2 + var(--hueco) + 1px); height: 105px; border-left-width: 2px; border-bottom-width: 2px; border-bottom-left-radius: 10px; }
+.r-previsto { left: 22px; top: 124px; transform: translateY(-50%); }
+.r-entra { left: calc(var(--g) + var(--nw) * 1.25 + var(--hueco) / 2); top: 352px; }
+.r-pago { right: 22px; top: 410px; transform: translateY(-50%); }
+.r-ajusta { left: var(--x1); top: 276px; }
+.r-sale { left: var(--x1); top: 428px; }
+.r-cobro { left: var(--x1); top: 604px; }
+
+/* Ancho: tres columnas, como se lee el ciclo de izquierda a derecha */
+@container mapa (min-width: 1000px) {
+  .mapa { --nw: 236px; --nh: 72px; max-width: none; height: 412px; }
+  .nodo { padding: 11px 14px; }
+  .nodo-nombre { gap: 8px; font-size: .9375rem; }
+  .nodo-nombre .ico { width: 18px; height: 18px; }
+  .nodo-linea { padding-left: 26px; font-size: .8125rem; }
+  .n-reposicion { left: 0; top: 0; }
+  .n-compra { left: calc(50% - var(--nw) / 2); top: 0; }
+  .n-recepcion { left: calc(100% - var(--nw)); top: 0; }
+  .n-recuento { left: 0; top: 170px; }
+  .n-stock { left: calc(50% - var(--nw) / 2); top: 170px; }
+  .n-venta { left: 0; top: 340px; }
+  .n-albaran { left: calc(50% - var(--nw) / 2); top: 340px; }
+  .n-caja { left: calc(100% - var(--nw)); top: 340px; }
+  .t-repo-compra { left: var(--nw); top: 35px; width: calc(50% - 1.5 * var(--nw)); }
+  .t-compra-recepcion { left: calc(50% + var(--nw) / 2); top: 35px; width: calc(50% - 1.5 * var(--nw)); height: 0; border-left-width: 0; border-top-width: 2px; }
+  .t-entra { left: calc(50% + var(--nw) / 2); top: 72px; width: calc(50% - var(--nw) - 23px); height: 135px; }
+  .t-pago { left: calc(100% - var(--nw) / 2 + 23px); top: 72px; width: 0; height: 268px; border-width: 0 0 0 2px; border-radius: 0; }
+  .t-previsto { left: var(--nw); top: 120px; width: calc(50% - var(--nw) + 1px); height: 50px; border-width: 2px 2px 0 0; border-radius: 0 10px 0 0; }
+  .t-previsto-b { display: block; left: calc(var(--nw) / 2 - 1px); top: 72px; width: calc(var(--nw) / 2 + 1px); height: 50px; border-left-width: 2px; border-bottom-width: 2px; border-bottom-left-radius: 10px; }
+  .t-ajusta { left: var(--nw); top: 205px; width: calc(50% - 1.5 * var(--nw)); height: 0; border-left-width: 0; border-top-width: 2px; }
+  .t-sale { left: calc(50% - 1px); top: 242px; height: 98px; }
+  .t-venta-albaran { left: var(--nw); top: 375px; width: calc(50% - 1.5 * var(--nw)); }
+  .t-cobro { left: calc(50% + var(--nw) / 2); top: 375px; width: calc(50% - 1.5 * var(--nw)); height: 0; border-width: 2px 0 0; border-radius: 0; }
+  .r-previsto { left: calc(25% + var(--nw) / 4); top: 121px; transform: translate(-50%, -50%); }
+  .r-entra { left: calc(75% - 12px); top: 206px; }
+  .r-pago { right: auto; left: calc(100% - var(--nw) / 2 + 24px); top: 291px; transform: translate(-50%, -50%); }
+  .r-ajusta { left: calc(25% + var(--nw) / 4); top: 206px; }
+  .r-sale { left: 50%; top: 291px; }
+  .r-cobro { left: calc(75% - var(--nw) / 4); top: 376px; }
+  .t-compra-recepcion::after, .t-ajusta::after, .t-venta-albaran::after, .t-cobro::after { top: -6px; right: 0; bottom: auto; left: auto; border-width: 5px 0 5px 9px; border-color: transparent transparent transparent currentColor; }
+  .t-pago::after { top: auto; right: auto; bottom: 0; left: -6px; border-width: 9px 5px 0; border-color: currentColor transparent transparent; }
+  .t-previsto::after { display: none; }
+}
+
+/* Tesorería: el texto junto a la ficha de un cobro */
+.lado { display: grid; gap: 32px 56px; }
+.lado .captura { margin-top: 0; }
+@media (min-width: 900px) { .lado { grid-template-columns: minmax(0, 1fr) auto; align-items: start; } }
+
+/* Radiografía: la franja azul vuelve una vez, para lo que lee quien lleva la empresa */
+.radiografia { margin-top: clamp(72px, 10vw, 128px); padding-block: clamp(64px, 9vw, 112px); background: var(--lateral); color: #fff; }
+.radiografia .seccion { padding-top: 0; }
+.radiografia .cabeza p:first-of-type { color: var(--lateral-texto); }
+.dictamen { margin-top: clamp(28px, 4vw, 44px); padding: clamp(22px, 3vw, 34px) clamp(22px, 3.4vw, 40px); border-radius: 8px; background: var(--superficie); color: var(--texto); }
+.dictamen p { font: 640 clamp(1.1875rem, .95rem + 1vw, 1.75rem)/1.35 var(--sans); letter-spacing: -.015em; }
+.dictamen p + p { margin-top: .5em; }
+.radiografia .nota-azul { margin-top: 14px; color: var(--lateral-texto); font-size: .9375rem; }
+.radiografia .texto p { color: var(--lateral-texto); }
+.radiografia .marco { width: 100%; border-color: rgba(157, 184, 240, .35); background: var(--fondo); }
+.radiografia .marco img { margin-inline: auto; } /* el recorte es algo más estrecho que la frase de arriba: se centra sobre el gris del programa */
+.radiografia figcaption { color: var(--lateral-texto); }
+.radiografia a { color: #fff; text-decoration-color: rgba(255, 255, 255, .5); }
+.radiografia .tras-dictamen { margin-top: clamp(36px, 5vw, 56px); }
+
+/* Informes y etiquetas, uno junto al otro */
+.par { display: grid; gap: clamp(72px, 10vw, 128px) 64px; padding-top: clamp(72px, 10vw, 128px); }
+.par > .seccion { padding-top: 0; }
+@media (min-width: 900px) { .par { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Lo demás: una lista con los iconos del programa, sin tarjetas */
+.demas { display: grid; gap: 0 48px; margin-top: clamp(28px, 4vw, 40px); }
+.demas div { padding: 20px 0 22px; border-top: 1px solid var(--borde); }
+.demas dt { display: flex; align-items: center; gap: 12px; font-weight: 640; letter-spacing: -.005em; }
+.demas .ico { width: 24px; height: 24px; color: var(--lateral); }
+.demas dd { margin-top: 4px; padding-left: 36px; color: var(--texto-suave); font-size: 1rem; line-height: 1.55; }
+@media (min-width: 700px) { .demas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1000px) { .demas { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* Reglas y límites: un panel partido, como los del programa */
+.doble { display: grid; margin-top: clamp(72px, 10vw, 128px); border: 1px solid var(--borde); border-radius: 8px; background: var(--superficie); }
+.doble > section { padding: clamp(24px, 4vw, 44px); }
+.doble > section + section { border-top: 1px solid var(--borde); }
+@media (min-width: 900px) { .doble { grid-template-columns: repeat(2, minmax(0, 1fr)); } .doble > section + section { border-top: 0; border-left: 1px solid var(--borde); } }
+.doble h2, .prueba h2 { font: 640 clamp(1.5rem, 1.25rem + .9vw, 2rem)/1.15 var(--sans); letter-spacing: -.02em; }
+.doble .intro { margin-top: 10px; color: var(--texto-suave); font-size: 1rem; }
+.lista { margin-top: 20px; padding: 0; list-style: none; }
+.lista li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; padding: 14px 0 15px; border-top: 1px solid var(--rejilla); font-size: 1rem; line-height: 1.55; }
+.lista .ico { width: 20px; height: 20px; margin-top: 2px; }
+.lista.si .ico { color: var(--ok); }
+.lista.no .ico { color: var(--texto-suave); }
+.lista b { font-weight: 640; }
+.doble .final { margin-top: 18px; font-size: 1rem; }
+
+/* Pruébala: tres pasos de verdad, en orden */
+.prueba { margin-top: clamp(72px, 10vw, 128px); padding: clamp(24px, 4vw, 48px); border: 1px solid var(--borde); border-radius: 8px; background: var(--superficie); }
+.pasos { margin-top: 26px; padding: 0; list-style: none; counter-reset: paso; display: grid; gap: 0; max-width: 46rem; }
+.pasos li { position: relative; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 0 16px; padding-bottom: 24px; counter-increment: paso; }
+.pasos li::before { content: counter(paso); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--seleccion); color: var(--lateral); font: 700 .9375rem/1 var(--sans); }
+.pasos li:not(:last-child)::after { content: ""; position: absolute; left: 16px; top: 40px; bottom: 6px; border-left: 2px solid var(--borde); }
+.pasos h3 { padding-top: 4px; font-size: 1.125rem; }
+.pasos p { grid-column: 2; margin-top: 6px; color: var(--texto); font-size: 1rem; line-height: 1.6; }
+.pasos li > * { grid-column: 2; }
+.pasos li::before { grid-column: 1; grid-row: 1 / span 2; }
+.cierre { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; margin-top: 10px; }
+.cierre .secundario { color: var(--azul); text-decoration-color: rgba(47, 99, 216, .45); }
+@media (hover: hover) { .cierre .secundario:hover { color: var(--azul); text-decoration-color: currentColor; } }
+.cierre :focus-visible { outline-color: var(--azul); }
+.datos { display: flex; align-items: flex-start; gap: 10px; margin-top: 22px; color: var(--texto-suave); font-size: .9375rem; line-height: 1.5; }
+.datos .ico { width: 20px; height: 20px; color: var(--ok); }
+
+/* Cómo está hecha */
+.hecha { display: grid; gap: 24px 64px; }
+.hecha .texto p { margin-top: 14px; }
+.hecha ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 0; }
+.hecha li { padding: 12px 0 13px; border-top: 1px solid var(--borde); color: var(--texto); font-size: 1rem; }
+.hecha li:last-child { border-bottom: 1px solid var(--borde); }
+@media (min-width: 980px) { .hecha { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); } .hecha ul { padding-top: 6px; } }
+
+/* Pie: la franja azul cierra la página */
+.pie { margin-top: clamp(72px, 10vw, 128px); padding: 30px 0 34px; background: var(--lateral); color: var(--lateral-texto); }
+.pie-fila { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 28px; font-size: .9375rem; }
+.pie p a, .pie .enlaces a { color: #fff; text-decoration-color: rgba(255, 255, 255, .45); }
+.enlaces { display: flex; flex-wrap: wrap; gap: 0 22px; }
+.enlaces a { display: inline-flex; align-items: center; min-height: 44px; }
+@media (hover: hover) { .pie a:hover { text-decoration-color: currentColor; } }
+
+@media (max-width: 559.98px) {
+  /* el texto del botón no baja de 19 px en negrita (el blanco sobre naranja solo llega a AA en letra grande): se gana sitio en el relleno */
+  .descarga { width: 100%; padding-inline: 16px; gap: 8px; line-height: 1.15; text-align: center; }
+  .prueba { padding-inline: 18px; }
+  .acciones { gap: 6px 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nodo, .tramo, .rotulo { transition: none; }
+}
+</style>
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false"><!-- Iconos de Remix Icon 4.9.1 (Remix Icon License v1.0), los mismos que usa el programa --><symbol id="i-download-2" viewBox="0 0 24 24"><path d="M13 10H18L12 16L6 10H11V3H13V10ZM4 19H20V12H22V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V12H4V19Z"/></symbol><symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z"/></symbol><symbol id="i-restart" viewBox="0 0 24 24"><path d="M18.5374 19.5674C16.7844 21.0831 14.4993 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 14.1361 21.3302 16.1158 20.1892 17.7406L17 12H20C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20C14.1502 20 16.1022 19.1517 17.5398 17.7716L18.5374 19.5674Z"/></symbol><symbol id="i-shopping-cart-2" viewBox="0 0 24 24"><path d="M4.00436 6.41686L0.761719 3.17422L2.17593 1.76001L5.41857 5.00265H20.6603C21.2126 5.00265 21.6603 5.45037 21.6603 6.00265C21.6603 6.09997 21.6461 6.19678 21.6182 6.29L19.2182 14.29C19.0913 14.713 18.7019 15.0027 18.2603 15.0027H6.00436V17.0027H17.0044V19.0027H5.00436C4.45207 19.0027 4.00436 18.5549 4.00436 18.0027V6.41686ZM6.00436 7.00265V13.0027H17.5163L19.3163 7.00265H6.00436ZM5.50436 23.0027C4.67593 23.0027 4.00436 22.3311 4.00436 21.5027C4.00436 20.6742 4.67593 20.0027 5.50436 20.0027C6.33279 20.0027 7.00436 20.6742 7.00436 21.5027C7.00436 22.3311 6.33279 23.0027 5.50436 23.0027ZM17.5044 23.0027C16.6759 23.0027 16.0044 22.3311 16.0044 21.5027C16.0044 20.6742 16.6759 20.0027 17.5044 20.0027C18.3328 20.0027 19.0044 20.6742 19.0044 21.5027C19.0044 22.3311 18.3328 23.0027 17.5044 23.0027Z"/></symbol><symbol id="i-inbox-archive" viewBox="0 0 24 24"><path d="M20 3L22 7V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V7.00353L4 3H20ZM20 9H4V19H20V9ZM13 10V14H16L12 18L8 14H11V10H13ZM18.7639 5H5.23656L4.23744 7H19.7639L18.7639 5Z"/></symbol><symbol id="i-stack" viewBox="0 0 24 24"><path d="M20.0833 15.1999L21.2854 15.9212C21.5221 16.0633 21.5989 16.3704 21.4569 16.6072C21.4146 16.6776 21.3557 16.7365 21.2854 16.7787L12.5144 22.0412C12.1977 22.2313 11.8021 22.2313 11.4854 22.0412L2.71451 16.7787C2.47772 16.6366 2.40093 16.3295 2.54301 16.0927C2.58523 16.0223 2.64413 15.9634 2.71451 15.9212L3.9166 15.1999L11.9999 20.0499L20.0833 15.1999ZM20.0833 10.4999L21.2854 11.2212C21.5221 11.3633 21.5989 11.6704 21.4569 11.9072C21.4146 11.9776 21.3557 12.0365 21.2854 12.0787L11.9999 17.6499L2.71451 12.0787C2.47772 11.9366 2.40093 11.6295 2.54301 11.3927C2.58523 11.3223 2.64413 11.2634 2.71451 11.2212L3.9166 10.4999L11.9999 15.3499L20.0833 10.4999ZM12.5144 1.30864L21.2854 6.5712C21.5221 6.71327 21.5989 7.0204 21.4569 7.25719C21.4146 7.32757 21.3557 7.38647 21.2854 7.42869L11.9999 12.9999L2.71451 7.42869C2.47772 7.28662 2.40093 6.97949 2.54301 6.7427C2.58523 6.67232 2.64413 6.61343 2.71451 6.5712L11.4854 1.30864C11.8021 1.11864 12.1977 1.11864 12.5144 1.30864ZM11.9999 3.33233L5.88723 6.99995L11.9999 10.6676L18.1126 6.99995L11.9999 3.33233Z"/></symbol><symbol id="i-clipboard" viewBox="0 0 24 24"><path d="M7 4V2H17V4H20.0066C20.5552 4 21 4.44495 21 4.9934V21.0066C21 21.5552 20.5551 22 20.0066 22H3.9934C3.44476 22 3 21.5551 3 21.0066V4.9934C3 4.44476 3.44495 4 3.9934 4H7ZM7 6H5V20H19V6H17V8H7V6ZM9 4V6H15V4H9Z"/></symbol><symbol id="i-file-list-3" viewBox="0 0 24 24"><path d="M19 22H5C3.34315 22 2 20.6569 2 19V3C2 2.44772 2.44772 2 3 2H17C17.5523 2 18 2.44772 18 3V15H22V19C22 20.6569 20.6569 22 19 22ZM18 17V19C18 19.5523 18.4477 20 19 20C19.5523 20 20 19.5523 20 19V17H18ZM16 20V4H4V19C4 19.5523 4.44772 20 5 20H16ZM6 7H14V9H6V7ZM6 11H14V13H6V11ZM6 15H11V17H6V15Z"/></symbol><symbol id="i-inbox-unarchive" viewBox="0 0 24 24"><path d="M20 3L22 7V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V7.00353L4 3H20ZM20 9H4V19H20V9ZM12 10L16 14H13V18H11V14H8L12 10ZM18.764 5H5.236L4.237 7H19.764L18.764 5Z"/></symbol><symbol id="i-bank" viewBox="0 0 24 24"><path d="M2 20H22V22H2V20ZM4 12H6V19H4V12ZM9 12H11V19H9V12ZM13 12H15V19H13V12ZM18 12H20V19H18V12ZM2 7L12 2L22 7V11H2V7ZM4 8.23607V9H20V8.23607L12 4.23607L4 8.23607ZM12 8C11.4477 8 11 7.55228 11 7C11 6.44772 11.4477 6 12 6C12.5523 6 13 6.44772 13 7C13 7.55228 12.5523 8 12 8Z"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="M9.9997 15.1709L19.1921 5.97852L20.6063 7.39273L9.9997 17.9993L3.63574 11.6354L5.04996 10.2212L9.9997 15.1709Z"/></symbol><symbol id="i-indeterminate-circle" viewBox="0 0 24 24"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM7 11H17V13H7V11Z"/></symbol><symbol id="i-team" viewBox="0 0 24 24"><path d="M12 11C14.7614 11 17 13.2386 17 16V22H15V16C15 14.4023 13.7511 13.0963 12.1763 13.0051L12 13C10.4023 13 9.09634 14.2489 9.00509 15.8237L9 16V22H7V16C7 13.2386 9.23858 11 12 11ZM5.5 14C5.77885 14 6.05009 14.0326 6.3101 14.0942C6.14202 14.594 6.03873 15.122 6.00896 15.6693L6 16L6.0007 16.0856C5.88757 16.0456 5.76821 16.0187 5.64446 16.0069L5.5 16C4.7203 16 4.07955 16.5949 4.00687 17.3555L4 17.5V22H2V17.5C2 15.567 3.567 14 5.5 14ZM18.5 14C20.433 14 22 15.567 22 17.5V22H20V17.5C20 16.7203 19.4051 16.0796 18.6445 16.0069L18.5 16C18.3248 16 18.1566 16.03 18.0003 16.0852L18 16C18 15.3343 17.8916 14.694 17.6915 14.0956C17.9499 14.0326 18.2211 14 18.5 14ZM5.5 8C6.88071 8 8 9.11929 8 10.5C8 11.8807 6.88071 13 5.5 13C4.11929 13 3 11.8807 3 10.5C3 9.11929 4.11929 8 5.5 8ZM18.5 8C19.8807 8 21 9.11929 21 10.5C21 11.8807 19.8807 13 18.5 13C17.1193 13 16 11.8807 16 10.5C16 9.11929 17.1193 8 18.5 8ZM5.5 10C5.22386 10 5 10.2239 5 10.5C5 10.7761 5.22386 11 5.5 11C5.77614 11 6 10.7761 6 10.5C6 10.2239 5.77614 10 5.5 10ZM18.5 10C18.2239 10 18 10.2239 18 10.5C18 10.7761 18.2239 11 18.5 11C18.7761 11 19 10.7761 19 10.5C19 10.2239 18.7761 10 18.5 10ZM12 2C14.2091 2 16 3.79086 16 6C16 8.20914 14.2091 10 12 10C9.79086 10 8 8.20914 8 6C8 3.79086 9.79086 2 12 2ZM12 4C10.8954 4 10 4.89543 10 6C10 7.10457 10.8954 8 12 8C13.1046 8 14 7.10457 14 6C14 4.89543 13.1046 4 12 4Z"/></symbol><symbol id="i-save-3" viewBox="0 0 24 24"><path d="M18 19H19V6.82843L17.1716 5H16V9H7V5H5V19H6V12H18V19ZM4 3H18L20.7071 5.70711C20.8946 5.89464 21 6.149 21 6.41421V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3ZM8 14V19H16V14H8Z"/></symbol><symbol id="i-file-excel-2" viewBox="0 0 24 24"><path d="M2.85858 2.87732L15.4293 1.0815C15.7027 1.04245 15.9559 1.2324 15.995 1.50577C15.9983 1.52919 16 1.55282 16 1.57648V22.4235C16 22.6996 15.7761 22.9235 15.5 22.9235C15.4763 22.9235 15.4527 22.9218 15.4293 22.9184L2.85858 21.1226C2.36593 21.0522 2 20.6303 2 20.1327V3.86727C2 3.36962 2.36593 2.9477 2.85858 2.87732ZM4 4.73457V19.2654L14 20.694V3.30599L4 4.73457ZM17 19H20V4.99997H17V2.99997H21C21.5523 2.99997 22 3.44769 22 3.99997V20C22 20.5523 21.5523 21 21 21H17V19ZM10.2 12L13 16H10.6L9 13.7143L7.39999 16H5L7.8 12L5 7.99997H7.39999L9 10.2857L10.6 7.99997H13L10.2 12Z"/></symbol><symbol id="i-file-edit" viewBox="0 0 24 24"><path d="M21 6.75736L19 8.75736V4H10V9H5V20H19V17.2426L21 15.2426V21.0082C21 21.556 20.5551 22 20.0066 22H3.9934C3.44476 22 3 21.5501 3 20.9932V8L9.00319 2H19.9978C20.5513 2 21 2.45531 21 2.9918V6.75736ZM21.7782 8.80761L23.1924 10.2218L15.4142 18L13.9979 17.9979L14 16.5858L21.7782 8.80761Z"/></symbol><symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M12 1L20.2169 2.82598C20.6745 2.92766 21 3.33347 21 3.80217V13.7889C21 15.795 19.9974 17.6684 18.3282 18.7812L12 23L5.6718 18.7812C4.00261 17.6684 3 15.795 3 13.7889V3.80217C3 3.33347 3.32553 2.92766 3.78307 2.82598L12 1ZM12 3.04879L5 4.60434V13.7889C5 15.1263 5.6684 16.3752 6.7812 17.1171L12 20.5963L17.2188 17.1171C18.3316 16.3752 19 15.1263 19 13.7889V4.60434L12 3.04879ZM16.4524 8.22183L17.8666 9.63604L11.5026 16L7.25999 11.7574L8.67421 10.3431L11.5019 13.1709L16.4524 8.22183Z"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><path d="M18.031 16.6168L22.3137 20.8995L20.8995 22.3137L16.6168 18.031C15.0769 19.263 13.124 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2C15.968 2 20 6.032 20 11C20 13.124 19.263 15.0769 18.031 16.6168ZM16.0247 15.8748C17.2475 14.6146 18 12.8956 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18C12.8956 18 14.6146 17.2475 15.8748 16.0247L16.0247 15.8748Z"/></symbol></svg>
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+
+<header class="arriba">
+  <nav class="ancho" aria-label="InvManager y la web de su autor">
+    <a class="marca" href="./"><svg viewBox="8 3 48 58" aria-hidden="true" focusable="false"><g fill="#9DB8F0"><rect x="19" y="10" width="11" height="13" rx="1"/><rect x="33" y="6" width="12" height="17" rx="1"/><rect x="19" y="33" width="16" height="12" rx="1"/><rect x="38" y="37" width="7" height="8" rx="1"/></g><g fill="#EC6316"><rect x="9" y="23" width="46" height="6" rx="1"/><rect x="9" y="45" width="46" height="6" rx="1"/></g><g fill="#FFFFFF"><rect x="9" y="4" width="6" height="56" rx="1.25"/><rect x="49" y="4" width="6" height="56" rx="1.25"/></g></svg>InvManager</a>
+    <a class="autor" href="https://jorgeguardiola.es/"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-arrow-left"/></svg>Jorge Guardiola Tomás</a>
+  </nav>
+</header>
+
+<main id="contenido">
+  <section class="portada" aria-labelledby="titulo">
+    <div class="portada-azul">
+      <div class="ancho">
+        <h1 id="titulo"><span class="l">Qué hay, qué falta, qué pedir</span> <span class="l">y cuándo se cobra.</span></h1>
+        <p class="entrada">Inventario, compras, ventas y tesorería para pequeñas empresas de distribución y comercio, en un programa de escritorio para Windows. Gratis.</p>
+        <div class="acciones">
+          <a class="descarga" href="https://github.com/jguardiola-dev/invmanager/releases/latest"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-download-2"/></svg>Descargar para Windows</a>
+          <a class="secundario" href="#probarla">Cómo probarla</a>
+        </div>
+        <p class="requisitos">Windows 10 y 11 de 64 bits. Lleva su propio Java: se descomprime y se abre.</p>
+      </div>
+    </div>
+    <div class="ancho">
+      <figure class="ventana">
+        <div class="ventana-marco"><img src="media/inicio.webp" width="1733" height="1116" fetchpriority="high" decoding="async" alt="Pantalla de inicio de InvManager: valor del stock, productos bajo mínimo, pedidos abiertos, lo que hay por cobrar y por pagar, y el estado de cada producto"></div>
+        <figcaption>Con Suministros Levante, S.L., la empresa ficticia que trae el programa para probarlo, a 13 de noviembre de 2026. <a href="media/inicio.webp">Ver a tamaño real</a></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="inicio" id="inicio" aria-labelledby="inicio-titulo">
+    <div class="ancho">
+      <div class="cabeza">
+        <h2 id="inicio-titulo">Lo primero que se ve al abrir</h2>
+        <p>Valor del stock, productos bajo mínimo y sin stock, pedidos abiertos de compra y de venta, lo que hay por cobrar y lo que toca pagar en 30 días, y el estado de cada producto de un vistazo. Cada cifra lleva a la pantalla donde se trabaja con ella.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion ciclo" id="funciones" aria-labelledby="ciclo-titulo">
+    <div class="ancho">
+      <div class="cabeza-ciclo">
+        <div class="cabeza">
+          <h2 id="ciclo-titulo">Todo el ciclo, de la reposición a la caja</h2>
+          <p>Cada paso alimenta el siguiente, y el stock que queda vuelve a decir qué hay que pedir.</p>
+          <p class="vh">En el mapa: la reposición crea los pedidos de compra; la recepción mete la mercancía en el stock y deja un pago previsto; el pedido de venta pasa a albarán, que saca la mercancía del stock y deja un cobro previsto; el recuento ajusta el stock; cobros y pagos previstos llegan a caja y bancos, y el stock previsto vuelve a la reposición.</p>
+        </div>
+        <p class="leyenda" aria-hidden="true"><span><i class="linea"></i>Mercancía</span><span><i class="linea dinero"></i>Dinero</span><span>Cada paso lleva a su apartado.</span></p>
+      </div>
+      <div class="mapa-zona">
+        <div class="mapa" id="mapa">
+          <i class="tramo t-repo-compra" data-de="reposicion compra" aria-hidden="true"></i>
+          <i class="tramo t-compra-recepcion" data-de="compra recepcion" aria-hidden="true"></i>
+          <i class="tramo t-entra" data-de="recepcion stock" aria-hidden="true"></i>
+          <i class="tramo dinero t-pago" data-de="recepcion caja" aria-hidden="true"></i>
+          <i class="tramo t-previsto" data-de="stock reposicion" aria-hidden="true"></i>
+          <i class="tramo t-previsto-b" data-de="stock reposicion" aria-hidden="true"></i>
+          <i class="tramo t-ajusta" data-de="recuento stock" aria-hidden="true"></i>
+          <i class="tramo t-sale" data-de="stock albaran" aria-hidden="true"></i>
+          <i class="tramo t-venta-albaran" data-de="venta albaran" aria-hidden="true"></i>
+          <i class="tramo dinero t-cobro" data-de="albaran caja" aria-hidden="true"></i>
+          <span class="rotulo r-previsto" data-de="stock reposicion" aria-hidden="true">stock previsto</span>
+          <span class="rotulo r-entra" data-de="recepcion stock" aria-hidden="true">entra</span>
+          <span class="rotulo dinero r-pago" data-de="recepcion caja" aria-hidden="true">pago previsto</span>
+          <span class="rotulo r-ajusta" data-de="recuento stock" aria-hidden="true">ajusta</span>
+          <span class="rotulo r-sale" data-de="stock albaran" aria-hidden="true">sale</span>
+          <span class="rotulo dinero r-cobro" data-de="albaran caja" aria-hidden="true">cobro previsto</span>
+          <a class="nodo n-reposicion" href="#compras" data-e="reposicion"><span class="nodo-nombre"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-restart"/></svg>Reposición</span><span class="nodo-linea">qué falta y qué pedir</span></a>
+          <a class="nodo n-compra" href="#compras" data-e="compra"><span class="nodo-nombre"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-shopping-cart-2"/></svg>Pedido de compra</span><span class="nodo-linea">uno por proveedor</span></a>
+          <a class="nodo n-recepcion" href="#compras" data-e="recepcion"><span class="nodo-nombre"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-inbox-archive"/></svg>Recepción</span><span class="nodo-linea">entra y recalcula el coste</span></a>
+          <a class="nodo n-recuento" href="#almacen" data-e="recuento"><span class="nodo-nombre"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-clipboard"/></svg>Recuento</span><span class="nodo-linea">corrige lo que no cuadra</span></a>
+          <a class="nodo n-stock" href="#almacen" data-e="stock"><span class="nodo-nombre"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-stack"/></svg>Stock</span><span class="nodo-linea">la suma del libro</span></a>
+          <a class="nodo n-venta" href="#ventas" data-e="venta"><span class="nodo-nombre"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-file-list-3"/></svg>Pedido de venta</span><span class="nodo-linea">reserva la mercancía</span></a>
+          <a class="nodo n-albaran" href="#ventas" data-e="albaran"><span class="nodo-nombre"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-inbox-unarchive"/></svg>Albarán</span><span class="nodo-linea">la saca del almacén</span></a>
+          <a class="nodo n-caja" href="#caja" data-e="caja"><span class="nodo-nombre"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-bank"/></svg>Caja y bancos</span><span class="nodo-linea">cobros y pagos previstos</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" id="compras" aria-labelledby="compras-titulo">
+    <div class="ancho">
+      <div class="texto">
+        <h2 id="compras-titulo">La reposición dice qué pedir</h2>
+        <p>Calcula qué productos se van a quedar por debajo de su mínimo, contando lo vendido sin servir y lo comprado sin recibir, y propone cuánto pedir de cada uno para volver a su máximo. Se corrige lo que haga falta y un clic crea un pedido en borrador para cada proveedor.</p>
+        <p>La recepción mete la mercancía en el almacén y recalcula el coste. Admite entregas parciales, y el pedido sabe en todo momento qué falta por llegar.</p>
+      </div>
+      <figure class="captura">
+        <div class="marco desliza"><img src="media/recorte-reposicion.webp" width="1132" height="472" loading="lazy" decoding="async" alt="Reposición: 24 productos a pedir a 8 proveedores, con el stock, lo reservado, lo pendiente de recibir, el mínimo y la cantidad a pedir de cada uno, y el botón «Crear pedidos de compra»"></div>
+        <figcaption>La reposición de la empresa de demostración. <a href="media/reposicion.webp">Ver la pantalla entera</a></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="seccion" id="almacen" aria-labelledby="almacen-titulo">
+    <div class="ancho">
+      <div class="texto">
+        <h2 id="almacen-titulo">Cada movimiento, en el libro</h2>
+        <p>Varios almacenes con sus existencias y su valor. Entradas, salidas, ajustes y traspasos se hacen desde la lista o desde la ficha del producto, y el libro de movimientos guarda cada cambio con su tipo, su documento de origen, el saldo que dejó y quién lo hizo.</p>
+      </div>
+      <figure class="captura">
+        <div class="marco oscura desliza"><img src="media/recorte-movimientos.webp" width="1132" height="462" loading="lazy" decoding="async" alt="Libro de movimientos en tema oscuro: fecha, referencia, producto, almacén, tipo, cantidad, saldo, valor y documento de cada movimiento"></div>
+        <figcaption>El libro de movimientos, en el tema oscuro del programa. <a href="media/movimientos-oscuro.webp">Ver la pantalla entera</a></figcaption>
+      </figure>
+      <div class="texto subparte">
+        <h3>Recuentos con lector de códigos</h3>
+        <p>El recuento guarda el stock teórico al abrirse y se cuenta con un lector de códigos de barras: cada lectura suma a lo contado y se guarda al momento. Al aplicarlo, cada diferencia se convierte en un ajuste, y el programa avisa si algo se movió mientras se contaba.</p>
+      </div>
+      <figure class="captura">
+        <div class="marco desliza"><img src="media/recorte-recuento.webp" width="1225" height="560" loading="lazy" decoding="async" alt="Hoja de recuento: el campo para escanear o escribir una referencia y, por cada ubicación, el stock teórico, lo contado y la diferencia"></div>
+        <figcaption>Un recuento a medias: 6 de 11 contados, 2 con diferencia. <a href="media/dialogo-recuento.webp">Ver la ventana entera</a></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="seccion" id="ventas" aria-labelledby="ventas-titulo">
+    <div class="ancho">
+      <div class="texto">
+        <h2 id="ventas-titulo">Ventas que reservan la mercancía</h2>
+        <p>Los pedidos de venta reservan la mercancía y avisan si se pide más de lo disponible, con el descuento habitual de cada cliente. Los albaranes salen del pedido, completos o parciales, o directos sin pedido.</p>
+        <p>Pedidos y albaranes salen en PDF con los datos de la empresa y del cliente y el IVA desglosado, y el albarán lleva el recuadro de firma de quien recibe.</p>
+      </div>
+      <figure class="captura">
+        <div class="marco desliza"><img src="media/recorte-venta.webp" width="1272" height="310" loading="lazy" decoding="async" alt="Pedido de venta: al añadir 12 unidades de una llave, el aviso «Supera lo disponible: quedan 7 ud libres (31 ud en stock y 24 reservadas en pedidos)», las líneas del pedido y el total con IVA"></div>
+        <figcaption>El aviso, con el pedido todavía sin confirmar. <a href="media/dialogo-documento.webp">Ver la ventana entera</a></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="seccion" id="caja" aria-labelledby="caja-titulo">
+    <div class="ancho">
+      <div class="lado">
+        <div class="texto">
+          <h2 id="caja-titulo">Cobros, pagos y la caja de las próximas semanas</h2>
+          <p>Al confirmar un albarán nace lo que se espera cobrar, y al confirmar una recepción, lo que hay que pagar, repartido en los plazos de cada cliente y proveedor. Lo que no pasa por el almacén, como el alquiler o las nóminas, se apunta a mano y puede repetirse cada mes.</p>
+          <p>Cobros y Pagos dicen de un vistazo cuánto ha vencido ya y cuánto vence en 7 y en 30 días. Un cobro se registra entero o en parte, y la previsión de caja dice cuánto dinero habrá al acabar cada semana.</p>
+          <p>No es contabilidad ni facturación: es la tesorería del día a día.</p>
+        </div>
+        <figure class="captura">
+          <div class="marco suelta"><img src="media/recorte-cobros-ficha.webp" width="354" height="628" loading="lazy" decoding="async" alt="Ficha de un cobro vencido hace 98 días: 335,02 € por cobrar de 559,02 €, con el botón «Registrar cobro» y los cobros ya apuntados"></div>
+        </figure>
+      </div>
+      <figure class="captura">
+        <div class="marco desliza"><img src="media/recorte-cobros-resumen.webp" width="1132" height="222" loading="lazy" decoding="async" alt="Resumen de cobros: 3.178,63 € vencidos, 2.402,49 € que vencen en 7 días, 6.627,28 € en 30 días y 13.767,75 € por cobrar en total"></div>
+        <figcaption>Los cobros de la empresa de demostración, a 13 de noviembre de 2026. <a href="media/cobros.webp">Ver la pantalla entera</a></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="radiografia" id="radiografia" aria-labelledby="radiografia-titulo">
+    <div class="ancho">
+      <div class="cabeza">
+        <h2 id="radiografia-titulo">Radiografía: el negocio, en claro</h2>
+        <p>Una página para quien lleva la empresa: cuánto dinero hay en el almacén y cuánto está parado o sobra, qué se va a agotar, quién debe y desde cuándo, cuántos días tarda el dinero en volver y las tres acciones que más caja liberan.</p>
+      </div>
+      <figure>
+        <div class="dictamen">
+          <p>Tienes 18.536 € en el almacén y el dinero tarda 120 días en volver.</p>
+          <p>De cada 100 € de stock, 26 llevan más de 90 días sin moverse y otros 31 sobran para los próximos 60 días de venta.</p>
+          <p>Te deben 13.813 €, y 3.179 € ya han vencido.</p>
+        </div>
+        <figcaption class="nota-azul">Así empieza la Radiografía de la empresa de demostración, con datos a 14 de noviembre de 2026.</figcaption>
+      </figure>
+      <div class="texto tras-dictamen">
+        <p>Cada acción lleva su importe, la cuenta de la que sale y lo que da por supuesto: son estimaciones, no asesoramiento. Las cifras son las mismas que las de los informes, y cada parte lleva al suyo.</p>
+      </div>
+      <figure class="captura">
+        <div class="marco desliza"><img src="media/recorte-radiografia.webp" width="1102" height="438" loading="lazy" decoding="async" alt="¿Cuánto dinero hay en el almacén? 18.536 € a coste medio: el 43 % se mueve, el 31 % sobra y el 26 % está parado, con los productos que más dinero tienen"></div>
+        <figcaption>La primera parte de esa misma Radiografía. <a href="media/radiografia.webp">Ver la pantalla entera</a></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <div class="ancho">
+    <div class="par">
+      <section class="seccion" id="informes" aria-labelledby="informes-titulo">
+        <div class="texto">
+          <h2 id="informes-titulo">Once informes, cada uno con su pregunta</h2>
+          <p>Llevan gráfico cuando ayuda a leerlos, y todos se exportan a Excel o CSV, como cualquier lista del programa.</p>
+          <p>El ciclo de caja junta el almacén con el dinero: los días que la mercancía pasa en la estantería, más los que se tarda en cobrarla, menos los que se tarda en pagarla.</p>
+        </div>
+        <figure class="captura">
+          <div class="marco"><img src="media/recorte-informes-lista.webp" width="249" height="590" loading="lazy" decoding="async" alt="Lista de los once informes, cada uno con la pregunta que responde: valoración de inventario, bajo mínimo, análisis ABC, rotación y cobertura, sin movimiento, compras por proveedor, ventas por cliente, ventas por producto, antigüedad de saldos, previsión de caja y ciclo de caja"></div>
+          <figcaption><a href="media/informes.webp">Ver la pantalla entera</a></figcaption>
+        </figure>
+      </section>
+
+      <section class="seccion" id="etiquetas" aria-labelledby="etiquetas-titulo">
+        <div class="texto">
+          <h2 id="etiquetas-titulo">Catálogo y etiquetas con código de barras</h2>
+          <p>Cada producto con su referencia, código de barras, categoría, unidad, IVA, proveedor habitual, precio, mínimo, máximo y ubicación. La ficha enseña el stock, el margen y lo último que se ha movido.</p>
+          <p>Desde la ficha salen etiquetas en PDF con código de barras (EAN-13 o la referencia en Code 128), precio con IVA y ubicación, en hojas A4 de 24 o 65 etiquetas o sueltas, aprovechando una hoja empezada.</p>
+        </div>
+        <figure class="captura">
+          <div class="marco"><img src="media/recorte-etiquetas.webp" width="388" height="544" loading="lazy" decoding="async" alt="Vista previa de una hoja A4 de 24 etiquetas: referencia, ubicación, nombre del producto, código de barras y precio"></div>
+          <figcaption><a href="media/dialogo-etiquetas.webp">Ver la ventana entera</a></figcaption>
+        </figure>
+      </section>
+    </div>
+
+    <section class="seccion" id="demas" aria-labelledby="demas-titulo">
+      <h2 id="demas-titulo">Y lo demás que hace falta cada día</h2>
+      <dl class="demas">
+        <div><dt><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-team"/></svg>Usuarios y permisos</dt><dd>Cada persona entra con su usuario, con uno de cuatro perfiles: administrador, gestor, almacén (sin ver costes ni cobros y pagos) o solo consulta.</dd></div>
+        <div><dt><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-save-3"/></svg>Copias de seguridad</dt><dd>En un clic o automáticas al cerrar el programa, con copia en otra carpeta y una restauración que guarda antes los datos del momento.</dd></div>
+        <div><dt><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-file-excel-2"/></svg>Importación desde Excel o CSV</dt><dd>Productos, clientes y proveedores. Enseña fila a fila qué se va a crear, actualizar o rechazar antes de guardar nada, y también trae los datos de la versión 1.0.</dd></div>
+        <div><dt><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-file-edit"/></svg>Auditoría</dt><dd>Quién dio de alta, cambió, archivó o confirmó qué, y cuándo.</dd></div>
+        <div><dt><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-search"/></svg>Buscador con <kbd>Ctrl</kbd>+<kbd>K</kbd></dt><dd>Pantallas, productos, clientes, proveedores, documentos y pendientes, sin distinguir tildes ni mayúsculas. Con el lector, un código lleva directo a su producto.</dd></div>
+      </dl>
+    </section>
+
+    <div class="doble">
+      <section id="reglas" aria-labelledby="reglas-titulo">
+        <h2 id="reglas-titulo">Reglas que el programa garantiza</h2>
+        <p class="intro">Las vigilan sus pruebas automáticas. <a href="https://github.com/jguardiola-dev/invmanager/blob/main/docs/reglas-de-negocio.md">Cada regla, con el nombre de su prueba</a>.</p>
+        <ul class="lista si">
+          <li><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-check"/></svg><span><b>El stock no se edita a mano.</b> Cada cambio es una línea en el libro de movimientos, con su motivo, su documento y su usuario, y las existencias son siempre la suma de ese libro.</span></li>
+          <li><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-check"/></svg><span><b>El coste es el precio medio ponderado.</b> Cada entrada lo recalcula con lo que ya había; las salidas salen a ese precio y no lo cambian.</span></li>
+          <li><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-check"/></svg><span><b>No se sirve ni se recibe más de lo pendiente</b> de un pedido, y no se saca lo que no hay, salvo que la empresa permita stock negativo.</span></li>
+          <li><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-check"/></svg><span><b>Una confirmación que falla no deja nada a medias.</b> Si una línea de un albarán no tiene stock, no sale ninguna.</span></li>
+          <li><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-check"/></svg><span><b>Lo que tiene historia se archiva, no se borra.</b> Los documentos confirmados se cancelan o se anulan con el movimiento contrario.</span></li>
+          <li><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-check"/></svg><span><b>Cada perfil hace lo que le toca.</b> El permiso se comprueba al guardar, no solo escondiendo botones.</span></li>
+          <li><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-check"/></svg><span><b>Ningún saldo se guarda.</b> Lo pendiente de un cobro, el saldo de una cuenta y los plazos de un documento salen siempre de sus movimientos, al céntimo.</span></li>
+        </ul>
+      </section>
+
+      <section id="preguntas" aria-labelledby="no-hace-titulo">
+        <h2 id="no-hace-titulo">Lo que no hace</h2>
+        <ul class="lista no">
+          <li><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-indeterminate-circle"/></svg><span><b>Facturas, a propósito.</b> Un programa que expide facturas entra en el reglamento español de sistemas de facturación (VERI*FACTU). InvManager llega hasta el albarán y hasta saber qué se debe; la factura se hace con el programa de facturación o la gestoría de cada uno.</span></li>
+          <li><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-indeterminate-circle"/></svg><span><b>Contabilidad ni banco.</b> Lleva la tesorería del día a día: lo que se espera cobrar y pagar y lo que se ha apuntado. No hace asientos, no genera remesas para el banco y no lee su extracto.</span></li>
+          <li><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-indeterminate-circle"/></svg><span><b>Varios ordenadores a la vez.</b> Los datos están en un fichero del propio ordenador: varias personas pueden usarlo por turnos, cada una con su usuario. Es la forma de que funcione sin servidor ni instalación.</span></li>
+          <li><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-indeterminate-circle"/></svg><span><b>Lotes, caducidades o números de serie, todavía.</b> El stock se lleva por producto y almacén.</span></li>
+          <li><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-indeterminate-circle"/></svg><span><b>Tienda online.</b> No se conecta con tiendas: necesitaría funcionar con la ventana cerrada y, en la práctica, trabajar en red.</span></li>
+        </ul>
+        <p class="final"><a href="https://github.com/jguardiola-dev/invmanager/blob/main/docs/funcionalidades.md">El análisis completo, con lo que falta para llegar a un ERP</a>.</p>
+      </section>
+    </div>
+
+    <section class="prueba" id="probarla" aria-labelledby="probarla-titulo">
+      <h2 id="probarla-titulo">Pruébala con la empresa de demostración</h2>
+      <ol class="pasos">
+        <li>
+          <h3>Descárgala</h3>
+          <p>El <span class="literal">.zip</span> de la <a href="https://github.com/jguardiola-dev/invmanager/releases/latest">última versión</a>, para Windows 10 y 11 de 64 bits. No hay que instalar nada: lleva su propio Java.</p>
+        </li>
+        <li>
+          <h3>Descomprímela y ábrela</h3>
+          <p>En una carpeta propia, abre <span class="literal">InvManager.exe</span>. No está firmada: si Windows enseña su aviso, pulsa «Más información» y «Ejecutar de todas formas».</p>
+        </li>
+        <li>
+          <h3>Entra con la empresa de demostración</h3>
+          <p>En el asistente, elige «Empezar con datos de demostración»: Suministros Levante, S.L., una empresa ficticia con unos 180 productos y seis meses de historia. Usuario <span class="literal">demo</span>, contraseña <span class="literal">demo123</span>. Los usuarios <span class="literal">almacen</span> y <span class="literal">consulta</span>, con la misma contraseña, enseñan lo que ve cada perfil.</p>
+        </li>
+      </ol>
+      <div class="cierre">
+        <a class="descarga" href="https://github.com/jguardiola-dev/invmanager/releases/latest"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-download-2"/></svg>Descargar para Windows</a>
+        <a class="secundario" href="https://github.com/jguardiola-dev/invmanager/releases">Todas las versiones</a>
+      </div>
+      <p class="datos"><svg class="ico" aria-hidden="true" focusable="false"><use href="#i-shield-check"/></svg><span>Todos los datos se quedan en la carpeta <span class="literal">data</span>, junto a <span class="literal">InvManager.exe</span>. Nada sale del ordenador.</span></p>
+    </section>
+
+    <section class="seccion hecha" id="como-esta-hecha" aria-labelledby="hecha-titulo">
+      <div class="texto">
+        <h2 id="hecha-titulo">Cómo está hecha</h2>
+        <p>Nació como proyecto final del ciclo de Desarrollo de Aplicaciones Multiplataforma (DAM). La versión 2 la rehace entera, con otra arquitectura, otra interfaz, el ciclo completo de compras y ventas y la tesorería. La 1.0, con su código, está en <a href="https://github.com/jguardiola-dev/invmanager-tfg">invmanager-tfg</a>.</p>
+        <p>Se descarga y se usa gratis; su código no es público.</p>
+      </div>
+      <ul>
+        <li>Java 21, con interfaz Swing y el aspecto de FlatLaf, en tema claro y oscuro.</li>
+        <li>SQLite como base de datos, con importes y cantidades guardados como enteros exactos, nunca con decimales aproximados.</li>
+        <li>Módulos independientes (catálogo, almacén, documentos, compras, ventas, tesorería, etiquetas, informes y administración), cada uno con sus tablas, sus servicios y sus pantallas.</li>
+        <li>Un único motor de stock y un único motor de documentos, compartidos por compras y ventas.</li>
+        <li>Pruebas automáticas que montan la aplicación entera, sin ventanas, sobre una base de datos temporal.</li>
+      </ul>
+    </section>
+  </div>
+</main>
+
+<footer class="pie">
+  <div class="ancho pie-fila">
+    <a class="marca" href="./"><svg viewBox="8 3 48 58" aria-hidden="true" focusable="false"><g fill="#9DB8F0"><rect x="19" y="10" width="11" height="13" rx="1"/><rect x="33" y="6" width="12" height="17" rx="1"/><rect x="19" y="33" width="16" height="12" rx="1"/><rect x="38" y="37" width="7" height="8" rx="1"/></g><g fill="#EC6316"><rect x="9" y="23" width="46" height="6" rx="1"/><rect x="9" y="45" width="46" height="6" rx="1"/></g><g fill="#FFFFFF"><rect x="9" y="4" width="6" height="56" rx="1.25"/><rect x="49" y="4" width="6" height="56" rx="1.25"/></g></svg>InvManager</a>
+    <p>Hecha por <a href="https://jorgeguardiola.es/">Jorge Guardiola Tomás</a>.</p>
+    <p class="enlaces"><a href="https://github.com/jguardiola-dev/invmanager">GitHub</a><a href="https://github.com/jguardiola-dev/invmanager/releases">Todas las versiones</a><a href="https://github.com/jguardiola-dev/invmanager/blob/main/docs/funcionalidades.md">Funcionalidades</a><a href="https://github.com/jguardiola-dev/invmanager/blob/main/LICENSE">Licencia</a></p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  // Capturas anchas que, en pantallas estrechas, se deslizan de lado: que también se puedan mover con el teclado.
+  const deslizables = document.querySelectorAll('.desliza');
+  const miraFinal = (d) => d.classList.toggle('al-final', d.scrollLeft + d.clientWidth >= d.scrollWidth - 2);
+  const marcaDeslizables = () => {
+    for (const d of deslizables) {
+      if (d.scrollWidth > d.clientWidth + 1) {
+        d.tabIndex = 0; d.setAttribute('role', 'region'); d.setAttribute('aria-label', 'Captura a tamaño real, que se desplaza de lado');
+        d.classList.add('desborda'); miraFinal(d);
+      } else {
+        d.removeAttribute('tabindex'); d.removeAttribute('role'); d.removeAttribute('aria-label');
+        d.classList.remove('desborda', 'al-final');
+      }
+    }
+  };
+  for (const d of deslizables) d.addEventListener('scroll', () => miraFinal(d), { passive: true });
+  marcaDeslizables();
+  addEventListener('resize', marcaDeslizables, { passive: true });
+
+  // El ciclo: al pasar por un paso, o llegar con el teclado, se encienden sus flujos y se apaga el resto.
+  const mapa = document.getElementById('mapa');
+  if (!mapa) return;
+  const nodos = [...mapa.querySelectorAll('.nodo')];
+  const flujos = [...mapa.querySelectorAll('[data-de]')];
+  const activa = (e) => {
+    const vecinos = new Set();
+    for (const f of flujos) {
+      const de = f.dataset.de.split(' ');
+      const vivo = !!e && de.includes(e);
+      f.classList.toggle('vivo', vivo);
+      if (vivo) de.forEach((x) => vecinos.add(x));
+    }
+    for (const n of nodos) {
+      n.classList.toggle('activo', n.dataset.e === e);
+      n.classList.toggle('vecino', !!e && n.dataset.e !== e && vecinos.has(n.dataset.e));
+    }
+    mapa.classList.toggle('foco', !!e);
+  };
+  for (const n of nodos) {
+    n.addEventListener('pointerenter', (ev) => { if (ev.pointerType === 'mouse') activa(n.dataset.e); });
+    n.addEventListener('pointerleave', (ev) => { if (ev.pointerType === 'mouse' && !mapa.contains(document.activeElement)) activa(null); });
+    n.addEventListener('focus', () => { if (n.matches(':focus-visible')) activa(n.dataset.e); });
+    n.addEventListener('blur', () => activa(null));
+  }
+})();
+</script>
+</body>
+</html>

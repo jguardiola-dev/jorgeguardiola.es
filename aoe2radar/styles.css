@@ -1,0 +1,268 @@
+/* aoe2radar — web de presentación. Sin frameworks ni fuentes externas: Segoe UI Variable, la letra de Windows, como
+   la app. Colores: los tokens del tema oscuro de la app (DESIGN.md §2) y su pergamino (el degradado del logotipo).
+   Un solo gesto llamativo: el rombo del radar (el minimapa del AoE2) con un barrido al cargar. */
+:root {
+  --tinta: #191816;        /* BG oscuro de la app */
+  --tinta-2: #22211e;      /* SURFACE */
+  --tinta-3: #2b2925;      /* SURFACE2 */
+  --linea: #3b3833;        /* BORDER */
+  --texto: #edebe7;        /* TEXT, 12,2:1 */
+  --texto-2: #b1aca4;      /* TEXT2, 6,4:1 */
+  --oro: #d4ae5e;          /* ORO: filete y aro, nunca texto pequeño */
+  --oro-fill: #c99b3c;     /* ORO_FILL con texto oscuro encima */
+  --on-oro: #1f1806;
+  --vivo: #ffc94d;         /* VIVO: «jugando» */
+  --enlace: #86abf2;       /* ACCENT */
+  --radar: #f2606c;        /* MARCA_ROJO: solo el barrido del radar */
+  --perg: #f1e8d4;         /* pergamino (gP del logotipo) */
+  --perg-2: #e6d9bb;
+  --perg-texto: #2a2318;
+  --perg-oro: #8a6a24;
+  --max: 1180px;
+  --radio: 10px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  overflow-x: clip;
+  background: var(--tinta);
+  color: var(--texto);
+  font: 17px/1.6 "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3 {
+  font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+  margin: 0;
+  text-wrap: balance;
+}
+h2 { font-size: clamp(30px, 3.6vw, 44px); }
+h3 { font-size: clamp(22px, 2.1vw, 27px); }
+p { margin: 0; }
+
+a { color: var(--enlace); text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--enlace); outline-offset: 3px; border-radius: 4px; }
+img, video { max-width: 100%; height: auto; display: block; }
+.ui { white-space: nowrap; font-weight: 600; }
+
+.skip { position: absolute; left: 12px; top: -60px; background: var(--oro-fill); color: var(--on-oro); padding: 8px 14px;
+  border-radius: 6px; z-index: 20; font-weight: 600; }
+.skip:focus { top: 12px; }
+
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+.estrecho { max-width: 820px; }
+section { padding: 96px 0; }
+
+/* ----- botón principal: relleno heráldico ----- */
+.boton {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--oro-fill); color: var(--on-oro);
+  font-weight: 650; font-size: 18px; text-decoration: none;
+  padding: 14px 26px; border-radius: 8px;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .18);
+}
+.boton::before {   /* el rombo de la marca, en pequeño */
+  content: ""; width: 10px; height: 10px; background: currentColor; transform: rotate(45deg); flex: none;
+}
+.boton:hover { background: #d6aa4c; text-decoration: none; }
+
+/* ----- cabecera ----- */
+header.top { position: sticky; top: 0; z-index: 10; background: var(--tinta); border-bottom: 1px solid var(--linea); }   /* sólido: el desenfoque apenas se notaba y gasta en el móvil */
+header.top .wrap { display: flex; align-items: center; gap: 20px; min-height: 64px; }
+.brand { display: block; flex: none; }
+.menu { margin-left: auto; display: flex; align-items: center; gap: 4px 22px; flex-wrap: wrap; justify-content: flex-end; }
+.menu a { color: var(--texto-2); text-decoration: none; font-size: 15px; }
+.menu a:hover { color: var(--texto); }
+.menu .idioma { color: var(--texto); border: 1px solid var(--linea); border-radius: 999px; padding: 3px 12px; }
+.menu .mini-cta { color: var(--on-oro); font-size: 15px; padding: 7px 14px; }
+.menu .mini-cta::before { width: 7px; height: 7px; }
+
+/* ----- portada ----- */
+.hero { padding: 72px 0 40px; position: relative; overflow: hidden; }
+.hero .wrap { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); }
+.hero-texto { max-width: 760px; position: relative; z-index: 2; }
+.hero h1 { font-size: clamp(40px, 6.2vw, 76px); line-height: 1.02; letter-spacing: -0.025em; margin-bottom: 24px; }
+.entrada { font-size: clamp(18px, 1.6vw, 21px); color: var(--texto-2); max-width: 62ch; margin-bottom: 32px; }
+.acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; margin-bottom: 16px; }
+.enlace-video { color: var(--texto); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
+.enlace-video::before { content: ""; width: 0; height: 0; border-left: 11px solid var(--oro); border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent; }
+.enlace-video:hover { text-decoration: underline; }
+.nota { color: var(--texto-2); font-size: 15px; }
+
+/* el radar: el icono de la marca (el rombo del minimapa) en grande, con un barrido al cargar: una vuelta y quieto
+   (girando sin parar distraía del titular y no se podía parar) */
+.radar { position: absolute; z-index: 1; right: 1%; top: -36px; width: 400px; max-width: 100%;
+  filter: drop-shadow(0 30px 50px rgba(0, 0, 0, .55)); }
+.radar svg { display: block; width: 100%; height: auto; }
+.radar .barrido { transform-box: view-box; transform-origin: 128px 128px; animation: girar 3.2s cubic-bezier(.25, .6, .3, 1) .3s 1 both; }
+@keyframes girar { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .radar .barrido { animation: none; } }
+
+.hero-figura { margin: 56px 0 0; position: relative; z-index: 2; }
+.vista-inicio { position: relative; margin: 0 0 48px; }
+.vista-inicio .aviso {
+  position: absolute; left: 4%; bottom: -26px; width: min(78%, 900px);
+  border-radius: 8px; box-shadow: 0 18px 40px rgba(0, 0, 0, .55), 0 0 0 1px rgba(255, 201, 77, .35);
+}
+
+/* ----- marcos ----- */
+/* una sola elevación: el borde. La sombra grande apenas se veía sobre el fondo oscuro (Impeccable: borde o sombra, no los dos) */
+.ventana { border: 1px solid var(--linea); border-radius: var(--radio); overflow: hidden; background: var(--tinta-2); }
+.juego { border-radius: var(--radio); overflow: hidden; border: 1px solid var(--linea); }
+.tarjeta { border-radius: var(--radio); overflow: hidden; box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .8), 0 0 0 1px rgba(255, 201, 77, .3); }
+video.clip { width: 100%; background: var(--tinta-2); }
+/* en el móvil, el recorte de la zona que importa de cada captura grande (tools/site_movil.py) */
+.solo-movil { display: none; }
+picture { display: block; }
+video.clip.tocable { cursor: pointer; }
+/* pausa de los vídeos: el aro de oro con las dos barras; parado, el triángulo. Solo aparece con JavaScript */
+.clip-caja { position: relative; }
+.clip-caja .cartel { position: absolute; inset: 0; width: 100%; height: 100%; }   /* sin JavaScript, la portada */
+.pausa { position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; padding: 0; display: grid; place-items: center;
+  border: 1.5px solid var(--oro); border-radius: 50%; background: rgba(25, 24, 22, .8); color: var(--texto); cursor: pointer; }
+.pausa[hidden] { display: none; }
+.pausa::before { content: ""; box-sizing: border-box; width: 12px; height: 14px; border-left: 4px solid currentColor; border-right: 4px solid currentColor; }
+.pausa.parado::before { width: 0; height: 0; margin-left: 4px; border-left: 13px solid currentColor; border-right: 0;
+  border-top: 8px solid transparent; border-bottom: 8px solid transparent; }
+.pausa:hover { background: rgba(25, 24, 22, .95); }
+
+/* ----- lo que la hace distinta ----- */
+.funciones { padding-top: 120px; }
+.cabeza { max-width: 760px; margin-bottom: 72px; }
+.cabeza h2 { margin-bottom: 16px; }
+.cabeza p { color: var(--texto-2); font-size: 19px; }
+
+.fila { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 56px; align-items: center; padding: 56px 0;
+  border-top: 1px solid var(--linea); }
+.fila.al-reves .texto { order: 2; }
+/* fila ancha: el texto arriba en dos columnas y la pantalla de la app a todo el ancho, para que su letra se lea */
+.fila.ancha { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+.fila.ancha .texto { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 0 64px; align-items: start; }
+.fila.ancha .texto > * { grid-column: 1; }
+.fila.ancha .puntos { grid-column: 2; grid-row: 1 / span 2; margin-top: 0; }
+.fila.ancha .puntos li:first-child { padding-top: 4px; }
+.fila.ancha .puntos li:first-child::before { top: 13px; }
+.fila h3 { margin-bottom: 14px; padding-left: 26px; position: relative; }
+.fila h3::before {   /* rombo de oro: marca cada función */
+  content: ""; position: absolute; left: 2px; top: .38em; width: 11px; height: 11px; transform: rotate(45deg);
+  background: var(--oro);
+}
+.fila .texto p { color: var(--texto-2); }
+.puntos { list-style: none; margin: 18px 0 0; padding: 0; }
+.puntos li { padding: 10px 0 0 26px; position: relative; color: var(--texto); font-size: 16px; }
+.puntos li::before { content: ""; position: absolute; left: 4px; top: 19px; width: 7px; height: 7px; transform: rotate(45deg);
+  border: 1.5px solid var(--oro); }
+
+/* ----- y además ----- */
+.mas { background: var(--tinta-2); border-top: 1px solid var(--linea); border-bottom: 1px solid var(--linea); }
+.mas h2 { margin-bottom: 40px; max-width: 760px; }
+.rejilla { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 32px; }
+.mini img { border-radius: 8px; border: 1px solid var(--linea); margin-bottom: 16px; width: 100%; }
+.mini h3 { font-size: 20px; margin-bottom: 6px; }
+.mini p { color: var(--texto-2); font-size: 16px; }
+.mas-nota { margin-top: 40px; color: var(--texto-2); }
+
+/* ----- sin spoilers: pergamino ----- */
+.pergamino { background: linear-gradient(180deg, var(--perg), var(--perg-2)); color: var(--perg-texto); }
+.pergamino a { color: #1d428a; }
+.pergamino h2 { margin-bottom: 18px; }
+.pergamino p { font-size: 19px; max-width: 46ch; }
+.dos { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 56px; align-items: start; }
+.lista { list-style: none; margin: 0; padding: 0; }
+.lista li { padding: 18px 0 18px 30px; position: relative; border-top: 1px solid rgba(138, 106, 36, .35); }
+.lista li:first-child { border-top: 0; padding-top: 4px; }
+.lista li::before { content: ""; position: absolute; left: 4px; top: 27px; width: 9px; height: 9px; transform: rotate(45deg);
+  background: var(--perg-oro); }
+.lista li:first-child::before { top: 13px; }
+.aldia .lista li { border-top-color: var(--linea); color: var(--texto-2); }
+.aldia .lista li strong { color: var(--texto); }
+.aldia .lista li::before { background: var(--oro); }
+
+/* ----- tráiler (en la portada) ----- */
+.trailer-caja { display: grid; gap: 12px; }
+.reproductor { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radio); overflow: hidden; border: 1px solid var(--linea);
+  background: var(--tinta-2); max-width: 100%; }
+.reproductor iframe, .reproducir, .reproducir img { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.reproducir img { object-fit: cover; }
+.reproducir span {   /* botón de reproducir: el rombo de la marca con el triángulo dentro */
+  position: absolute; left: 50%; top: 50%; width: 76px; height: 76px; margin: -38px 0 0 -38px; transform: rotate(45deg);
+  background: var(--oro-fill); border-radius: 10px; box-shadow: 0 10px 30px rgba(0, 0, 0, .55); transition: transform .15s;
+}
+.reproducir span::after { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-35%, -50%) rotate(-45deg);
+  border-left: 22px solid var(--on-oro); border-top: 14px solid transparent; border-bottom: 14px solid transparent; }
+.reproducir:hover span, .reproducir:focus-visible span { transform: rotate(45deg) scale(1.08); }
+@media (prefers-reduced-motion: reduce) { .reproducir span { transition: none; } }
+.trailer-nota { font-size: 14px; color: var(--texto-2); }
+
+/* ----- instalar: es una secuencia, va numerada ----- */
+.instalar { border-top: 1px solid var(--linea); }
+.instalar h2 { margin-bottom: 36px; }
+.pasos { counter-reset: paso; list-style: none; margin: 0 0 28px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+.pasos li { counter-increment: paso; padding-top: 64px; position: relative; color: var(--texto-2); }
+.pasos li strong { color: var(--texto); }
+.pasos li::before { content: ""; position: absolute; left: 6px; top: 6px; width: 40px; height: 40px; background: var(--oro-fill);
+  transform: rotate(45deg); border-radius: 4px; }
+.pasos li::after { content: counter(paso); position: absolute; left: 6px; top: 6px; width: 40px; height: 40px; display: grid;
+  place-items: center; font-weight: 700; color: var(--on-oro); }
+.instalar .nota { margin-bottom: 28px; }
+
+/* ----- preguntas ----- */
+.preguntas { background: var(--tinta-2); border-top: 1px solid var(--linea); }
+.preguntas h2 { margin-bottom: 28px; }
+details { border-top: 1px solid var(--linea); }
+details:last-of-type { border-bottom: 1px solid var(--linea); }
+summary { cursor: pointer; padding: 18px 36px 18px 0; font-weight: 600; font-size: 18px; list-style: none; position: relative; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: ""; position: absolute; right: 8px; top: 26px; width: 9px; height: 9px; border-right: 2px solid var(--oro);
+  border-bottom: 2px solid var(--oro); transform: rotate(45deg); transition: transform .15s; }
+details[open] summary::after { transform: rotate(-135deg); top: 30px; }
+details p { padding: 0 0 20px; color: var(--texto-2); max-width: 68ch; }
+
+/* ----- créditos y pie ----- */
+.creditos { padding: 72px 0; }
+.creditos h2 { font-size: 26px; margin-bottom: 16px; }
+.creditos ul { margin: 0 0 24px; padding-left: 20px; color: var(--texto-2); font-size: 15px; }
+.creditos li { margin-bottom: 8px; }
+.legal { color: var(--texto-2); font-size: 14px; }
+.legal p { margin-bottom: 8px; }
+.pie { border-top: 1px solid var(--linea); padding: 40px 0 56px; color: var(--texto-2); font-size: 15px; }
+.pie img { margin-bottom: 16px; }
+.pie p { margin-bottom: 8px; }
+.pie .enlaces { display: flex; flex-wrap: wrap; gap: 6px 22px; }
+.pie .copy { font-size: 13px; }
+
+/* ----- pantallas medianas y móvil ----- */
+@media (max-width: 1240px) { .radar { width: 300px; right: 0; top: -10px; } }
+@media (max-width: 1000px) {
+  .radar { width: 260px; right: -50px; top: -30px; opacity: .55; }
+  .fila, .dos { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .fila.al-reves .texto { order: 0; }
+  .fila.ancha .texto { grid-template-columns: minmax(0, 1fr); }
+  .fila.ancha .puntos { grid-column: 1; grid-row: auto; margin-top: 18px; }
+  .rejilla { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .solo-ancho { display: none; }
+  .solo-movil { display: block; }
+  body { font-size: 16px; }
+  .wrap { padding: 0 16px; }
+  section { padding: 64px 0; }
+  .menu a:not(.idioma) { display: none; }
+  header.top .wrap { gap: 12px; }
+  .hero { padding-top: 40px; }
+  .radar { display: none; }
+  .hero-figura { margin-top: 36px; }
+  .vista-inicio .aviso { position: static; width: 100%; margin-top: 14px; }
+  .fila { padding: 40px 0; }
+  .rejilla, .pasos { grid-template-columns: minmax(0, 1fr); }
+}
