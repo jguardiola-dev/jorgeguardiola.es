@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InvManager: inventario, compras, ventas y caja para pymes</title>
+<meta name="description" content="Programa de escritorio para Windows, gratis: inventario, compras, ventas, cobros y pagos e informes para pequeñas empresas de distribución y comercio.">
+<link rel="canonical" href="https://jorgeguardiola.es/invmanager/">
+<link rel="icon" href="icono.svg" type="image/svg+xml">
+<meta name="theme-color" content="#16357a">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:title" content="InvManager: inventario, compras, ventas y caja para pymes">
+<meta property="og:description" content="Qué hay, qué falta, qué pedir y cuándo se cobra, en un programa de escritorio para Windows. Gratis.">
+<meta property="og:url" content="https://jorgeguardiola.es/invmanager/">
+<meta property="og:image" content="https://jorgeguardiola.es/invmanager/media/compartir.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+/* InvManager — página de presentación, con la estructura de la de aoe2radar y los colores del programa:
+   el azul marino de su barra lateral, el naranja de su marca y su fondo gris claro. Sin fuentes externas:
+   la letra del sistema, que en Windows es la del propio programa. */
+:root {
+  --marino: #16357a;        /* barra lateral del programa */
+  --marino-2: #0f2860;      /* elemento activo */
+  --naranja: #ec6316;       /* marca: estantes y señales, nunca texto pequeño */
+  --boton: #c2410c;         /* naranja oscuro: texto blanco encima con contraste suficiente */
+  --boton-2: #9a3412;
+  --caja: #a9c0f2;          /* las cajas del logotipo */
+  --azul: #2357c9;
+  --fondo: #f2f4f7;         /* fondo del contenido del programa */
+  --linea: #dde2ea;
+  --texto: #1b2333;
+  --texto-2: #535d70;
+  --max: 1180px;
+  --radio: 10px;
+  --hueco: calc(min(var(--max), 100vw - 40px) * .2);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  overflow-x: clip;
+  background: var(--fondo);
+  color: var(--texto);
+  font: 17px/1.6 "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+h1, h2, h3 {
+  font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 650;
+  letter-spacing: -.015em;
+  line-height: 1.12;
+  margin: 0;
+  text-wrap: balance;
+}
+p { margin: 0; }
+a { color: var(--azul); text-underline-offset: 2px; }
+img { display: block; max-width: 100%; height: auto; }
+figure { margin: 0; }
+code { font: .9em ui-monospace, Consolas, monospace; background: #e6eaf2; padding: 1px 6px; border-radius: 4px; }
+.ancho { width: min(var(--max), 100% - 40px); margin-inline: auto; }
+@media (max-width: 480px) { .ancho { width: calc(100% - 32px); } }
+.saltar { position: absolute; left: -9999px; }
+.saltar:focus { left: 16px; top: 12px; z-index: 30; background: #fff; color: var(--marino); padding: 8px 12px; border-radius: 6px; }
+:focus-visible { outline: 3px solid var(--naranja); outline-offset: 2px; }
+
+/* Cabecera fija */
+.arriba { position: sticky; top: 0; z-index: 20; background: var(--marino); border-bottom: 1px solid rgba(255, 255, 255, .08); }
+.barra { display: flex; align-items: center; gap: 16px; min-height: 62px; }
+.marca { display: flex; align-items: center; gap: 10px; margin-right: auto; color: #fff; text-decoration: none; font-weight: 650; font-size: 1.12rem; }
+.marca svg { width: 26px; height: 28px; flex: none; }
+.menu { display: flex; align-items: center; gap: 22px; }
+.menu a { color: rgba(255, 255, 255, .8); text-decoration: none; font-size: .95rem; }
+.menu a:hover { color: #fff; }
+@media (max-width: 820px) { .menu a:not(.boton) { display: none; } }
+
+.boton {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--boton); color: #fff; text-decoration: none; font-weight: 600;
+  padding: 13px 22px; border-radius: 8px; box-shadow: 0 2px 0 rgba(0, 0, 0, .2);
+}
+.boton:hover { background: var(--boton-2); }
+.boton svg { width: 16px; height: 16px; flex: none; }
+.menu .boton { color: #fff; padding: 8px 14px; font-size: .92rem; }
+
+/* Portada: azul marino, como la barra del programa, y la pantalla de inicio montada encima del fondo claro */
+.portada { background: linear-gradient(180deg, var(--marino) 0%, var(--marino-2) 100%); color: #fff; padding-top: 64px; }
+.portada-rejilla { display: grid; gap: 32px; align-items: center; }
+@media (min-width: 900px) { .portada-rejilla { grid-template-columns: 7fr 4fr; } }
+.portada h1 { font-size: clamp(2.2rem, 5.4vw, 4.1rem); font-weight: 700; }
+.entrada { margin-top: 22px; font-size: 1.2rem; color: rgba(255, 255, 255, .86); max-width: 34em; }
+.portada .boton { margin-top: 30px; }
+.nota { margin-top: 14px; font-size: .92rem; color: rgba(255, 255, 255, .72); }
+.estanteria { display: none; }
+@media (min-width: 900px) {
+  .estanteria { display: block; width: min(100%, 300px); justify-self: center; filter: drop-shadow(0 24px 40px rgba(0, 0, 0, .35)); }
+}
+.estanteria .c { fill: var(--caja); animation: cae .7s cubic-bezier(.2, .8, .2, 1) both; }
+.estanteria .c2 { animation-delay: .12s; }
+.estanteria .c3 { animation-delay: .24s; }
+.estanteria .c4 { animation-delay: .36s; }
+@keyframes cae { from { transform: translateY(-16px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .estanteria .c { animation: none; } }
+.vista { position: relative; z-index: 1; margin: 48px auto calc(-1 * var(--hueco)); }
+.vista img, .media img {
+  border-radius: var(--radio);
+  box-shadow: 0 18px 50px rgba(15, 40, 96, .22), 0 0 0 1px rgba(15, 40, 96, .12);
+  background: #fff;
+}
+
+/* Funciones */
+.funciones { padding: calc(var(--hueco) + 72px) 0 24px; }
+.cabeza h2, .seccion h2 { font-size: clamp(1.9rem, 3.6vw, 2.8rem); }
+.cabeza p, .seccion > .ancho > p.lead { margin-top: 14px; font-size: 1.12rem; color: var(--texto-2); max-width: 44em; }
+.ciclo { list-style: none; display: flex; flex-wrap: wrap; gap: 10px 8px; margin: 28px 0 0; padding: 0; }
+.ciclo li { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: .95rem; color: var(--marino-2); }
+.ciclo span { background: #fff; border: 1px solid var(--linea); border-radius: 999px; padding: 6px 14px; }
+.ciclo li:not(:last-child)::after { content: "→"; color: var(--naranja); font-weight: 700; }
+.fila { display: grid; gap: 28px; align-items: center; padding: 56px 0; border-top: 1px solid var(--linea); }
+.cabeza + .fila { border-top: 0; }
+@media (min-width: 900px) {
+  .fila { grid-template-columns: 5fr 7fr; gap: 56px; }
+  .fila.al-reves { grid-template-columns: 7fr 5fr; }
+  .fila.al-reves .texto { order: 2; }
+}
+.texto h3 { display: flex; gap: 12px; align-items: baseline; font-size: clamp(1.45rem, 2.6vw, 1.9rem); }
+.texto h3::before { content: ""; flex: none; width: 12px; height: 12px; background: var(--naranja); border-radius: 2px; transform: translateY(-2px); }
+.texto p { margin-top: 14px; color: var(--texto-2); font-size: 1.06rem; }
+.lista { list-style: none; margin: 18px 0 0; padding: 0; }
+.lista li { position: relative; padding-left: 24px; margin-top: 10px; }
+.lista li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 8px; height: 8px; border: 2px solid var(--naranja); border-radius: 2px; }
+
+/* Secciones de texto */
+.seccion { padding: 72px 0; }
+.tarjetas { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; margin-top: 32px; }
+.tarjeta { background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); padding: 22px 22px 24px; }
+.tarjeta h3 { font-size: 1.15rem; }
+.tarjeta p { margin-top: 8px; color: var(--texto-2); font-size: .98rem; }
+
+/* Reglas: la franja oscura, como la del pergamino en aoe2radar pero al revés */
+.reglas { background: var(--marino-2); color: #fff; padding: 80px 0; }
+.reglas-rejilla { display: grid; gap: 36px; }
+@media (min-width: 900px) { .reglas-rejilla { grid-template-columns: 4fr 7fr; gap: 64px; } }
+.reglas h2 { font-size: clamp(1.9rem, 3.6vw, 2.8rem); }
+.reglas .lead { margin-top: 16px; color: rgba(255, 255, 255, .8); }
+.reglas a { color: #fff; }
+.reglas ul { list-style: none; margin: 0; padding: 0; }
+.reglas li { position: relative; padding: 14px 0 14px 28px; border-top: 1px solid rgba(255, 255, 255, .12); color: rgba(255, 255, 255, .8); }
+.reglas li:first-child { border-top: 0; padding-top: 0; }
+.reglas li::before { content: ""; position: absolute; left: 2px; top: calc(14px + .55em); width: 10px; height: 10px; background: var(--naranja); border-radius: 2px; }
+.reglas li:first-child::before { top: .55em; }
+.reglas li b { color: #fff; }
+
+/* Probarla */
+.pasos { list-style: none; margin: 32px 0 0; padding: 0; display: grid; gap: 18px; counter-reset: paso; }
+@media (min-width: 900px) { .pasos { grid-template-columns: repeat(3, 1fr); } }
+.pasos li { counter-increment: paso; background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); padding: 22px; }
+.pasos li::before { content: counter(paso); display: grid; place-items: center; width: 36px; height: 36px; border-radius: 8px; background: var(--marino); color: #fff; font-weight: 700; margin-bottom: 14px; }
+.pasos b { display: block; margin-bottom: 6px; }
+.pasos p { color: var(--texto-2); font-size: .98rem; }
+.probarla-pie { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: 28px; }
+.probarla-pie .nota { color: var(--texto-2); margin: 0; }
+
+/* Cómo está hecha y preguntas */
+.borde { border-top: 1px solid var(--linea); }
+.dos { display: grid; gap: 28px; }
+@media (min-width: 900px) { .dos { grid-template-columns: 4fr 7fr; gap: 64px; } }
+.dos > div > p { margin-top: 14px; color: var(--texto-2); }
+.preguntas details { background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); margin-top: 12px; }
+.preguntas details:first-of-type { margin-top: 0; }
+.preguntas summary { cursor: pointer; list-style: none; padding: 16px 20px; font-weight: 600; display: flex; justify-content: space-between; gap: 16px; }
+.preguntas summary::-webkit-details-marker { display: none; }
+.preguntas summary::after { content: "+"; flex: none; color: var(--naranja); font-weight: 700; font-size: 1.3rem; line-height: 1.1; }
+.preguntas details[open] summary::after { content: "−"; }
+.preguntas details p { padding: 0 20px 18px; color: var(--texto-2); }
+
+/* Pie */
+.pie { background: var(--marino); color: rgba(255, 255, 255, .8); padding: 40px 0 48px; font-size: .95rem; }
+.pie a { color: #fff; }
+.pie .marca { display: inline-flex; margin: 0 0 14px; }
+.enlaces { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 14px; }
+</style>
+</head>
+<body>
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+
+<header class="arriba">
+  <div class="ancho barra">
+    <a class="marca" href="./" aria-label="InvManager, inicio">
+      <svg viewBox="5 6 30 37" aria-hidden="true"><rect x="11.5" y="10" width="7.5" height="9" rx=".6" fill="#a9c0f2"/><rect x="21" y="7.5" width="8" height="11.5" rx=".6" fill="#a9c0f2"/><rect x="11.5" y="25" width="10.5" height="8" rx=".6" fill="#a9c0f2"/><rect x="24" y="28" width="5" height="5" rx=".6" fill="#a9c0f2"/><rect x="9" y="19" width="22" height="3.5" fill="#ec6316"/><rect x="9" y="33" width="22" height="3.5" fill="#ec6316"/><rect x="5" y="6" width="4" height="37" rx=".8" fill="#fff"/><rect x="31" y="6" width="4" height="37" rx=".8" fill="#fff"/></svg>
+      <span>InvManager</span>
+    </a>
+    <nav class="menu" aria-label="Secciones">
+      <a href="#funciones">Funciones</a>
+      <a href="#reglas">Reglas</a>
+      <a href="#probarla">Probarla</a>
+      <a href="#preguntas">Preguntas</a>
+      <a href="https://github.com/jguardiola-dev/invmanager">GitHub</a>
+      <a class="boton" href="https://github.com/jguardiola-dev/invmanager/releases/latest">Descargar</a>
+    </nav>
+  </div>
+</header>
+
+<main id="contenido">
+  <section class="portada">
+    <div class="ancho portada-rejilla">
+      <div>
+        <h1>Qué hay, qué falta, qué pedir y cuándo se cobra.</h1>
+        <p class="entrada">Inventario, compras, ventas y tesorería para pequeñas empresas de distribución y comercio, en un programa de escritorio para Windows.</p>
+        <a class="boton" href="https://github.com/jguardiola-dev/invmanager/releases/latest"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v9m0 0L4.5 6.5M8 10l3.5-3.5M2 13.5h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Descargar para Windows</a>
+        <p class="nota">Gratis, para Windows 10 y 11 de 64 bits. Lleva su propio Java: se descomprime y se abre.</p>
+      </div>
+      <svg class="estanteria" viewBox="4 3 32 42" aria-hidden="true">
+        <rect class="c c1" x="11.5" y="10" width="7.5" height="9" rx=".6"/>
+        <rect class="c c2" x="21" y="7.5" width="8" height="11.5" rx=".6"/>
+        <rect class="c c3" x="11.5" y="25" width="10.5" height="8" rx=".6"/>
+        <rect class="c c4" x="24" y="28" width="5" height="5" rx=".6"/>
+        <rect x="9" y="19" width="22" height="3.5" fill="#ec6316"/>
+        <rect x="9" y="33" width="22" height="3.5" fill="#ec6316"/>
+        <rect x="5" y="6" width="4" height="37" rx=".8" fill="#fff"/>
+        <rect x="31" y="6" width="4" height="37" rx=".8" fill="#fff"/>
+      </svg>
+    </div>
+    <figure class="ancho vista">
+      <img src="media/inicio.webp" width="1733" height="1116" alt="Pantalla de inicio de InvManager: valor del stock, productos bajo mínimo, pedidos abiertos, lo que hay por cobrar y por pagar, y el estado de cada producto">
+    </figure>
+  </section>
+
+  <section class="funciones" id="funciones">
+    <div class="ancho">
+      <header class="cabeza">
+        <h2>Todo el ciclo, de la reposición a la caja</h2>
+        <p>Cada paso alimenta el siguiente, y el stock que queda vuelve a decir qué hay que pedir.</p>
+        <ol class="ciclo" aria-label="El ciclo de InvManager">
+          <li><span>Reposición</span></li>
+          <li><span>Pedido de compra</span></li>
+          <li><span>Recepción</span></li>
+          <li><span>Pedido de venta</span></li>
+          <li><span>Albarán</span></li>
+          <li><span>Cobros y pagos</span></li>
+        </ol>
+      </header>
+
+      <article class="fila">
+        <div class="texto">
+          <h3>Catálogo y etiquetas con código de barras</h3>
+          <p>Cada producto con su referencia, código de barras, categoría, IVA, proveedor habitual, precio, mínimo, máximo y ubicación. La ficha enseña el stock, el margen y lo último que se ha movido.</p>
+          <ul class="lista">
+            <li>Etiquetas en PDF con código de barras, precio con IVA y ubicación, en hojas A4 de 24 o 65 o sueltas, aprovechando una hoja empezada.</li>
+            <li>Lo que tiene historia no se borra: se archiva.</li>
+          </ul>
+        </div>
+        <figure class="media"><img src="media/dialogo-etiquetas.webp" width="913" height="729" loading="lazy" alt="Etiquetas de producto con vista previa"></figure>
+      </article>
+
+      <article class="fila al-reves">
+        <div class="texto">
+          <h3>Cada movimiento, en el libro</h3>
+          <p>Varios almacenes con sus existencias y su valor. Entradas, salidas, ajustes y traspasos desde la lista o desde la ficha del producto.</p>
+          <ul class="lista">
+            <li>El libro de movimientos guarda cada cambio con su tipo, su documento de origen, el saldo que dejó y quién lo hizo.</li>
+            <li>Se filtra por producto, tipo, almacén y fechas.</li>
+          </ul>
+        </div>
+        <figure class="media"><img src="media/movimientos-oscuro.webp" width="1400" height="902" loading="lazy" alt="Libro de movimientos, en tema oscuro"></figure>
+      </article>
+
+      <article class="fila">
+        <div class="texto">
+          <h3>Recuentos con lector de códigos</h3>
+          <p>El recuento guarda el stock teórico al abrirse y se cuenta con un lector de códigos de barras: cada lectura suma a lo contado y se guarda al momento.</p>
+          <ul class="lista">
+            <li>Al aplicarlo, cada diferencia se convierte en un ajuste.</li>
+            <li>Avisa si algo se movió mientras se contaba.</li>
+          </ul>
+        </div>
+        <figure class="media"><img src="media/dialogo-recuento.webp" width="1225" height="824" loading="lazy" alt="Hoja de recuento con lector de códigos de barras"></figure>
+      </article>
+
+      <article class="fila al-reves">
+        <div class="texto">
+          <h3>La reposición dice qué pedir</h3>
+          <p>Calcula qué productos se van a quedar por debajo de su mínimo, contando lo vendido sin servir y lo comprado sin recibir, y propone cuánto pedir de cada uno para volver a su máximo.</p>
+          <ul class="lista">
+            <li>Un clic crea un pedido en borrador para cada proveedor.</li>
+            <li>Las recepciones admiten entregas parciales, y el pedido sabe qué falta por llegar.</li>
+          </ul>
+        </div>
+        <figure class="media"><img src="media/reposicion.webp" width="1400" height="902" loading="lazy" alt="Propuesta de reposición, con lo que hay que pedir de cada producto"></figure>
+      </article>
+
+      <article class="fila">
+        <div class="texto">
+          <h3>Ventas que reservan la mercancía</h3>
+          <p>Los pedidos de venta reservan la mercancía y avisan si se pide más de lo disponible, con el descuento habitual de cada cliente. Los albaranes salen del pedido, completos o parciales, o directos sin pedido.</p>
+          <ul class="lista">
+            <li>Pedidos y albaranes en PDF, con el IVA desglosado y el recuadro de firma de quien recibe.</li>
+          </ul>
+        </div>
+        <figure class="media"><img src="media/dialogo-documento.webp" width="1300" height="835" loading="lazy" alt="Edición de un documento con sus líneas y totales"></figure>
+      </article>
+
+      <article class="fila al-reves">
+        <div class="texto">
+          <h3>Cobros, pagos y la caja de las próximas semanas</h3>
+          <p>Cada albarán deja lo que se espera cobrar y cada recepción lo que hay que pagar, repartido en los plazos de cada cliente y proveedor. Lo que no pasa por el almacén, como el alquiler o las nóminas, se apunta a mano y puede repetirse cada mes.</p>
+          <ul class="lista">
+            <li>Cobros y Pagos dicen cuánto ha vencido ya y cuánto vence en 7 y en 30 días.</li>
+            <li>La previsión de caja dice cuánto dinero habrá al acabar cada semana.</li>
+          </ul>
+        </div>
+        <figure class="media"><img src="media/cobros.webp" width="1400" height="902" loading="lazy" alt="Cobros pendientes, con la ficha de uno cobrado en parte"></figure>
+      </article>
+
+      <article class="fila">
+        <div class="texto">
+          <h3>Radiografía: el negocio, en claro</h3>
+          <p>Una página para quien lleva la empresa: cuánto dinero hay en el almacén y cuánto está parado o sobra, qué se va a agotar, quién debe y desde cuándo, cuántos días tarda el dinero en volver y las tres acciones que más caja liberan.</p>
+          <ul class="lista">
+            <li>Cada acción lleva su importe, la cuenta de la que sale y lo que da por supuesto. Son estimaciones, no asesoramiento.</li>
+          </ul>
+        </div>
+        <figure class="media"><img src="media/radiografia.webp" width="1400" height="902" loading="lazy" alt="Radiografía de stock y caja"></figure>
+      </article>
+
+      <article class="fila al-reves">
+        <div class="texto">
+          <h3>Once informes, cada uno con su pregunta</h3>
+          <p>Valoración del inventario, bajo mínimo, análisis ABC, rotación y cobertura, productos sin movimiento, compras por proveedor, ventas por cliente y por producto con margen, antigüedad de saldos, previsión de caja y ciclo de caja.</p>
+          <ul class="lista">
+            <li>Con gráfico cuando ayuda a leerlos.</li>
+            <li>Todos se exportan a Excel o CSV, como cualquier lista del programa.</li>
+          </ul>
+        </div>
+        <figure class="media"><img src="media/informes.webp" width="1400" height="902" loading="lazy" alt="Lista de informes"></figure>
+      </article>
+    </div>
+  </section>
+
+  <section class="seccion borde">
+    <div class="ancho">
+      <h2>Y lo demás que hace falta cada día</h2>
+      <div class="tarjetas">
+        <div class="tarjeta">
+          <h3>Usuarios y permisos</h3>
+          <p>Cada persona entra con su usuario, con uno de cuatro perfiles: administrador, gestor, almacén (sin ver costes ni cobros y pagos) o solo consulta.</p>
+        </div>
+        <div class="tarjeta">
+          <h3>Copias de seguridad</h3>
+          <p>En un clic o automáticas al cerrar el programa, con copia en otra carpeta y una restauración que guarda antes los datos del momento.</p>
+        </div>
+        <div class="tarjeta">
+          <h3>Importación desde Excel o CSV</h3>
+          <p>Productos, clientes y proveedores. Enseña fila a fila qué se va a crear, actualizar o rechazar antes de guardar nada.</p>
+        </div>
+        <div class="tarjeta">
+          <h3>Auditoría</h3>
+          <p>Quién dio de alta, cambió, archivó o confirmó qué, y cuándo.</p>
+        </div>
+        <div class="tarjeta">
+          <h3>Buscador con Ctrl+K</h3>
+          <p>Pantallas, productos, clientes, proveedores, documentos y pendientes, sin distinguir tildes ni mayúsculas. Con el lector, un código lleva directo a su producto.</p>
+        </div>
+        <div class="tarjeta">
+          <h3>Los datos, en tu ordenador</h3>
+          <p>La base de datos y las copias quedan en la carpeta <code>data</code>, junto al programa. Nada sale del ordenador.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reglas" id="reglas">
+    <div class="ancho reglas-rejilla">
+      <div>
+        <h2>Reglas que el programa garantiza</h2>
+        <p class="lead">Las vigilan sus pruebas automáticas. <a href="https://github.com/jguardiola-dev/invmanager/blob/main/docs/reglas-de-negocio.md">Cada regla, con el nombre de su prueba</a>.</p>
+      </div>
+      <ul>
+        <li><b>El stock no se edita a mano.</b> Cada cambio es una línea en el libro de movimientos, con su motivo, su documento y su usuario, y las existencias son siempre la suma de ese libro.</li>
+        <li><b>El coste es el precio medio ponderado.</b> Cada entrada lo recalcula con lo que ya había; las salidas salen a ese precio y no lo cambian.</li>
+        <li><b>No se sirve ni se recibe más de lo pendiente</b> de un pedido, y no se saca lo que no hay, salvo que la empresa permita stock negativo.</li>
+        <li><b>Una confirmación que falla no deja nada a medias.</b> Si una línea de un albarán no tiene stock, no sale ninguna.</li>
+        <li><b>Lo que tiene historia se archiva, no se borra.</b> Los documentos confirmados se cancelan o se anulan con el movimiento contrario.</li>
+        <li><b>Cada perfil hace lo que le toca.</b> El permiso se comprueba al guardar, no solo escondiendo botones.</li>
+        <li><b>Ningún saldo se guarda.</b> Lo pendiente de un cobro, el saldo de una cuenta y los plazos de un documento salen siempre de sus movimientos, al céntimo.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="seccion" id="probarla">
+    <div class="ancho">
+      <h2>Pruébala en tres pasos</h2>
+      <ol class="pasos">
+        <li>
+          <b>Descárgala</b>
+          <p>El <code>.zip</code> de la <a href="https://github.com/jguardiola-dev/invmanager/releases/latest">última versión</a>, para Windows 10 y 11 de 64 bits.</p>
+        </li>
+        <li>
+          <b>Descomprímela y ábrela</b>
+          <p>En una carpeta propia, abre <code>InvManager.exe</code>. No está firmada: si Windows enseña su aviso, pulsa «Más información» y «Ejecutar de todas formas».</p>
+        </li>
+        <li>
+          <b>Entra con la empresa de demostración</b>
+          <p>En el asistente, elige «Empezar con datos de demostración»: Suministros Levante, S.L., con unos 180 productos y seis meses de historia. Usuario <code>demo</code>, contraseña <code>demo123</code>.</p>
+        </li>
+      </ol>
+      <div class="probarla-pie">
+        <a class="boton" href="https://github.com/jguardiola-dev/invmanager/releases/latest"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v9m0 0L4.5 6.5M8 10l3.5-3.5M2 13.5h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Descargar para Windows</a>
+        <p class="nota">Los usuarios <code>almacen</code> y <code>consulta</code>, con la misma contraseña, enseñan lo que ve cada perfil.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion borde" id="como-esta-hecha">
+    <div class="ancho dos">
+      <div>
+        <h2>Cómo está hecha</h2>
+        <p>Nació como proyecto final del ciclo de Desarrollo de Aplicaciones Multiplataforma (DAM). La versión 2 la rehace entera, con el ciclo completo de compras y ventas y la tesorería. La 1.0, con su código, está en <a href="https://github.com/jguardiola-dev/invmanager-tfg">invmanager-tfg</a>.</p>
+      </div>
+      <ul class="lista">
+        <li>Java 21, con interfaz Swing y el aspecto de FlatLaf, en tema claro y oscuro.</li>
+        <li>SQLite como base de datos, con importes y cantidades guardados como enteros exactos, nunca con decimales aproximados.</li>
+        <li>Módulos independientes (catálogo, almacén, documentos, compras, ventas, tesorería, etiquetas, informes y administración), cada uno con sus tablas, sus servicios y sus pantallas.</li>
+        <li>Un único motor de stock y un único motor de documentos, compartidos por compras y ventas.</li>
+        <li>Pruebas automáticas que montan la aplicación entera, sin ventanas, sobre una base de datos temporal.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="seccion borde preguntas" id="preguntas">
+    <div class="ancho dos">
+      <div>
+        <h2>Preguntas frecuentes</h2>
+      </div>
+      <div>
+        <details>
+          <summary>¿Cuánto cuesta?</summary>
+          <p>Nada. Se descarga y se usa gratis. Su código no es público.</p>
+        </details>
+        <details>
+          <summary>¿Hace facturas?</summary>
+          <p>No, a propósito. Un programa que expide facturas entra en el reglamento español de sistemas de facturación (VERI*FACTU). InvManager llega hasta el albarán y hasta saber qué se debe; la factura se hace con el programa de facturación o la gestoría de cada uno.</p>
+        </details>
+        <details>
+          <summary>¿Lleva la contabilidad o el banco?</summary>
+          <p>No. Lleva la tesorería del día a día: lo que se espera cobrar y pagar y lo que se ha apuntado. No hace asientos, no genera remesas para el banco y no lee su extracto.</p>
+        </details>
+        <details>
+          <summary>¿Se puede usar desde varios ordenadores?</summary>
+          <p>No a la vez. Los datos están en un fichero del propio ordenador: varias personas pueden usarlo por turnos, cada una con su usuario. Es la forma de que funcione sin servidor ni instalación.</p>
+        </details>
+        <details>
+          <summary>¿Lleva lotes, caducidades o números de serie?</summary>
+          <p>Todavía no. El stock se lleva por producto y almacén.</p>
+        </details>
+        <details>
+          <summary>¿Se conecta con una tienda online?</summary>
+          <p>No. Necesitaría funcionar con la ventana cerrada y, en la práctica, trabajar en red.</p>
+        </details>
+        <details>
+          <summary>¿Puedo traer mis datos?</summary>
+          <p>Sí. Productos, clientes y proveedores desde Excel o CSV, y los datos de la versión 1.0 desde Ajustes.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="ancho">
+    <a class="marca" href="./">
+      <svg viewBox="5 6 30 37" aria-hidden="true"><rect x="11.5" y="10" width="7.5" height="9" rx=".6" fill="#a9c0f2"/><rect x="21" y="7.5" width="8" height="11.5" rx=".6" fill="#a9c0f2"/><rect x="11.5" y="25" width="10.5" height="8" rx=".6" fill="#a9c0f2"/><rect x="24" y="28" width="5" height="5" rx=".6" fill="#a9c0f2"/><rect x="9" y="19" width="22" height="3.5" fill="#ec6316"/><rect x="9" y="33" width="22" height="3.5" fill="#ec6316"/><rect x="5" y="6" width="4" height="37" rx=".8" fill="#fff"/><rect x="31" y="6" width="4" height="37" rx=".8" fill="#fff"/></svg>
+      <span>InvManager</span>
+    </a>
+    <p>Hecha por <a href="https://jorgeguardiola.es/">Jorge Guardiola Tomás</a>.</p>
+    <p class="enlaces">
+      <a href="https://github.com/jguardiola-dev/invmanager">GitHub</a>
+      <a href="https://github.com/jguardiola-dev/invmanager/releases">Todas las versiones</a>
+      <a href="https://github.com/jguardiola-dev/invmanager/blob/main/docs/funcionalidades.md">Funcionalidades</a>
+      <a href="https://github.com/jguardiola-dev/invmanager/blob/main/LICENSE">Licencia</a>
+    </p>
+  </div>
+</footer>
+</body>
+</html>

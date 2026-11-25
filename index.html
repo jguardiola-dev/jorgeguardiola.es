@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jorge Guardiola Tomás | Consultor de procesos · IA aplicada</title>
+<meta name="description" content="Analizo cómo funciona un negocio, detecto ineficiencias, optimizo procesos y automatizo lo repetitivo. Consultor de procesos con base técnica en desarrollo de software.">
+<link rel="canonical" href="https://jorgeguardiola.es/">
+<meta name="theme-color" content="#1B2B41">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Jorge Guardiola Tomás">
+<meta property="og:title" content="Jorge Guardiola Tomás | Consultor de procesos · IA aplicada">
+<meta property="og:description" content="Analizo cómo funciona un negocio, detecto ineficiencias, optimizo procesos y automatizo lo repetitivo. Consultor de procesos con base técnica en desarrollo de software.">
+<meta property="og:url" content="https://jorgeguardiola.es/">
+<meta property="og:image" content="https://jorgeguardiola.es/vista-previa.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Jorge Guardiola Tomás, consultor de procesos. Un tablero con chinchetas unidas por hilos.">
+<meta name="twitter:card" content="summary_large_image">
+<script type="speculationrules">{"prerender": [{"where": {"href_matches": "/invmanager/*"}, "eagerness": "moderate"}]}</script>
+<link rel="preload" href="fuentes/alegreya-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fuentes/alegreya-sans-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Person", "name": "Jorge Guardiola Tomás", "jobTitle": "Consultor de procesos", "url": "https://jorgeguardiola.es/", "image": "https://jorgeguardiola.es/jorge-grande.jpg", "sameAs": ["https://www.linkedin.com/in/jorgeguardiola/", "https://github.com/jguardiola-dev"], "address": {"@type": "PostalAddress", "addressLocality": "Valencia", "addressCountry": "ES"}}</script>
+<script>document.documentElement.className = 'js'; if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
+<style>
+/* Fuentes servidas desde la propia web (Alegreya y Alegreya Sans, licencia SIL OFL 1.1) */
+@font-face { font-family: "Alegreya"; font-style: normal; font-weight: 400 900; font-display: swap; src: url("fuentes/alegreya-latin-wght-normal.woff2") format("woff2"); }
+@font-face { font-family: "Alegreya"; font-style: italic; font-weight: 400 900; font-display: swap; src: url("fuentes/alegreya-latin-wght-italic.woff2") format("woff2"); }
+@font-face { font-family: "Alegreya Sans"; font-style: normal; font-weight: 400; font-display: swap; src: url("fuentes/alegreya-sans-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Alegreya Sans"; font-style: normal; font-weight: 500; font-display: swap; src: url("fuentes/alegreya-sans-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Alegreya Sans"; font-style: normal; font-weight: 700; font-display: swap; src: url("fuentes/alegreya-sans-latin-700-normal.woff2") format("woff2"); }
+:root {
+  /* Idea: un tablón de fieltro que se queda a la vista mientras se lee. Cada bloque de texto mueve el tablero: enciende un sitio, tensa un hilo o marca un paso. Al bajar, el tablero se aplasta hasta una franja y deja el sitio al texto. Tema único, a propósito. */
+  /* Paleta (Jorge, 15 de noviembre de 2026): sus colores Pantone, con el marfil tal como se ve en su muestra */
+  --tapete: #1B2B41;     /* pared: Azurite (Pantone 20-0141 TPM) */
+  --tiza: #F6EFE4;       /* letras sobre la pared: Pearled Ivory (11-0907 TCX), como en su muestra */
+  --hilo: #F6EFE4;       /* hilo en reposo */
+  --detalle: #D3C28F;    /* lo que se lee (hilo o sitio del que se habla), las chinchetas y el botón del CV: Sunflower Seed (14-0926 TSX) */
+  --detalle-papel: #A1883D; /* el mismo, legible sobre papel: las marcas de la rejilla */
+  --guia: #5B7E98;       /* lo que guía: el hilo conductor y sus cinco pasos: Blue Heaven (17-4023 TCX) */
+  --guia-papel: #506F86; /* el mismo azul, legible como texto sobre papel */
+  --sobre-guia: #060A0E; /* texto sobre el azul de guía */
+  --ficha: #F6EFE4;      /* papel de los bloques: el mismo marfil */
+  --tinta: #18211C;      /* texto del bloque que se lee */
+  --espera: #656E69;     /* texto de los bloques que aún no tocan */
+  --gris: #59635D;       /* datos secundarios sobre papel */
+  --raya: #E1D6C6;       /* separadores sobre papel */
+  --serif: "Alegreya", Georgia, "Times New Roman", serif;
+  --sans: "Alegreya Sans", "Trebuchet MS", Arial, sans-serif;
+  --margen: clamp(16px, 5vw, 56px);
+  --etq: 108px;          /* ancho de cada rótulo del tablero */
+  --alto-max: clamp(270px, 42vh, 330px);   /* alto del tablero entero, arriba del todo */
+  --alto-min: 190px;     /* alto del tablero ya aplastado, mientras se lee */
+  --alto-fijo: 0px;      /* lo que ocupa el tablero cuando se queda fijo; lo pone el script */
+  color-scheme: dark;
+}
+@supports (height: 1svh) { :root { --alto-max: clamp(270px, 42svh, 330px); } }
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { margin: 0; background: var(--tapete); color: var(--tiza); font: 400 1.0625rem/1.5 var(--serif); }
+a { color: inherit; }
+:focus-visible { outline: 2.5px solid var(--tiza); outline-offset: 3px; }
+.bloque :focus-visible, .hoja :focus-visible { outline-color: var(--tinta); }
+
+.cabecera { max-width: 76rem; padding: 22px var(--margen) 4px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 18px; align-items: start; }
+.quien { grid-column: 1; display: grid; gap: 8px; }
+.cabecera h1 { margin: 0; font: 700 clamp(1.75rem, 7.6vw, 3rem)/1 var(--serif); letter-spacing: -.01em; text-wrap: balance; }
+.puesto { margin: 0; font: 500 1.125rem/1.25 var(--sans); }
+.donde a { display: inline-block; padding: 10px 0; margin: -10px 0; text-underline-offset: 4px; overflow-wrap: anywhere; }
+@media (max-width: 350px) { .donde .pto { display: none; } .donde a { display: block; width: max-content; max-width: 100%; margin: -4px 0 -10px; } }
+.donde { margin: 0; font: 400 1rem/1.3 var(--sans); color: rgba(246, 239, 228, .88); }
+.arriba { margin: -6px 0 -8px; display: flex; flex-wrap: wrap; gap: 0 20px; font: 700 1rem/1 var(--sans); }
+.correo { grid-column: 1 / -1; margin: 0; font: 700 1rem/1 var(--sans); }
+.correo a { display: inline-block; padding: 14px 0; text-underline-offset: 4px; overflow-wrap: anywhere; }
+.arriba a { display: inline-block; padding: 14px 0; text-underline-offset: 4px; }
+.arriba { align-items: center; }
+.arriba .cv { min-height: 34px; display: inline-flex; align-items: center; gap: 7px; padding: 0 14px 0 12px; font-size: .9375rem; border-radius: 999px; background: var(--detalle); color: var(--tinta); text-decoration: none; box-shadow: 0 2px 0 rgba(0, 0, 0, .3); transition: background .2s, transform .2s; -webkit-tap-highlight-color: transparent; }
+.arriba .salto { display: none; }
+@media (max-width: 979px) { .arriba .cv { margin: 10px 0 0; } .arriba .salto { display: block; flex-basis: 100%; height: 0; } }   /* en el móvil, el CV en su propia línea, antes que LinkedIn y GitHub */
+.cv .baja { flex: none; width: 16px; height: 16px; }   /* icono de descarga del botón del CV */
+@media (hover: hover) { .arriba .cv:hover { background: #DDD0A9; transform: translateY(-1px); } }
+.retrato { grid-column: 2; grid-row: 1; position: relative; margin: 6px 6px 0 0; width: 80px; transform: rotate(3deg); cursor: zoom-in; -webkit-tap-highlight-color: transparent; }
+.retrato { transition: opacity .14s linear; }
+.retrato.fuera { opacity: 0; }
+.retrato img { display: block; width: 80px; height: 100px; object-fit: cover; border: 4px solid #FFFFFF; box-shadow: 1px 3px 0 rgba(0, 0, 0, .22); }
+.retrato::before { content: ""; position: absolute; left: 50%; top: -5px; width: 11px; height: 11px; margin-left: -5px; border-radius: 50%; background: var(--detalle); box-shadow: 0 2px 0 rgba(0, 0, 0, .3); }
+.retrato figcaption { margin-top: 7px; font: italic 400 .875rem/1.1 var(--serif); text-align: center; }
+.entrada { grid-column: 1 / -1; margin: 2px 0 0; max-width: 36em; font: 400 1.0625rem/1.45 var(--serif); }
+.entrada p { margin: 0; }
+.entrada p + p { margin-top: .6em; }
+
+/* Foto ampliada: una copia grande de verdad, con el pie a su tamaño */
+.telon { position: fixed; inset: 0; z-index: 60; background: rgba(14, 22, 31, .93); opacity: 0; transition: opacity .35s; cursor: zoom-out; }
+.telon.visto { opacity: 1; }
+.telon[hidden], .ampliada[hidden] { display: none; }
+.ampliada { position: fixed; left: 50%; top: 50%; z-index: 70; margin: 0; width: min(88vw, 440px, calc((100vh - 110px) * .8)); transform: translate(-50%, -50%) rotate(-2deg); transition: transform .5s cubic-bezier(.2, .8, .2, 1); cursor: zoom-out; outline: none; }
+.ampliada img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border: 8px solid #FFFFFF; background: #FFFFFF; box-shadow: 2px 6px 0 rgba(0, 0, 0, .25); }
+.ampliada::before { content: ""; position: absolute; left: 50%; top: -9px; width: 20px; height: 20px; margin-left: -10px; border-radius: 50%; background: var(--detalle); box-shadow: 0 3px 0 rgba(0, 0, 0, .3); }
+.ampliada figcaption { margin-top: 12px; color: var(--tiza); font: italic 400 1.1875rem/1.2 var(--serif); text-align: center; transition: opacity .2s ease; }
+.ampliada.cerrando { transition: transform .62s cubic-bezier(.45, 0, .2, 1), opacity .14s linear; }
+.ampliada::before { transition: opacity .2s ease; }
+.ampliada.cerrando::before { opacity: 0; }
+.ampliada.cerrando figcaption { opacity: 0; }
+.ampliada.fundida { opacity: 0; }
+
+/* Cambio de vista: el tablero o todo en una tabla */
+.cambio { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 0 17px 0 13px; border: 1.5px solid rgba(246, 239, 228, .8); border-radius: 999px; background: none; color: var(--tiza); cursor: pointer; font: 700 1rem/1 var(--sans); scroll-margin-top: 12px; -webkit-tap-highlight-color: transparent; }
+.bloque .cambio, .hoja .cambio { border-color: var(--tinta); color: var(--tinta); }
+.capitulo .cambio { border-color: rgba(246, 239, 228, .8); color: var(--tiza); }
+.vuelta .cambio { padding: 0 17px; }
+.rej { flex: none; width: 17px; height: 14px; border: 1.5px solid currentColor; background: linear-gradient(currentColor, currentColor) 0 3.5px / 100% 1.5px no-repeat, linear-gradient(currentColor, currentColor) 0 7.5px / 100% 1.5px no-repeat, linear-gradient(currentColor, currentColor) 4.5px 0 / 1.5px 100% no-repeat; }
+html:not(.js) .uso { display: none; }
+.en-tabla .escena { display: none; }
+
+.cuerpo { max-width: 76rem; padding: 0 var(--margen) 44px; }
+
+/* Tablero: en el móvil se queda fijo arriba y se aplasta al bajar. El ancla (.mesa) no ocupa alto y sujeta el tablero arriba;
+   el fondo (.fondo) guarda en la página el alto del tablero entero y se queda pegado cuando ya solo asoma la franja. */
+.mesa { position: sticky; top: 0; z-index: 6; height: 0; margin-top: 12px; }
+.tablero { position: absolute; left: 0; right: 0; top: 6px; height: var(--alto-max); }
+.fondo { position: sticky; top: calc(var(--alto-min) - var(--alto-max)); z-index: 5; height: calc(var(--alto-max) + 14px); margin: 0 calc(-1 * var(--margen)); background: var(--tapete); box-shadow: 0 8px 10px -9px rgba(0, 0, 0, .55); }
+html:not(.js) .mesa { position: relative; }
+html:not(.js) .fondo { position: static; box-shadow: none; }
+.cuerdas { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.sombra, .cuerda, .toque { fill: none; stroke-linecap: round; }
+.sombra { stroke: rgba(0, 0, 0, .24); stroke-width: 1.7; transform: translate(1px, 2.5px); }
+.cuerda { stroke: var(--hilo); stroke-width: 1.7; transition: stroke .2s, stroke-width .2s; }
+.toque { stroke: transparent; stroke-width: 16; pointer-events: stroke; cursor: pointer; }
+.tramo, .suelto { transition: opacity .25s; }
+.tramo.vivo .cuerda { stroke: var(--detalle); stroke-width: 2.8; }
+.tramo.guia .cuerda { stroke: var(--guia); stroke-width: 2.3; }
+.tramo.guia .sombra { stroke-width: 2.3; }
+.tramo.guia.vivo .cuerda { stroke-width: 3.4; }
+.tramo.apagado, .suelto.apagado { opacity: .2; }
+.tramo.apagado.suave, .suelto.apagado.suave { opacity: .25; }   /* el azul de guía es más oscuro que los hilos: el resto se apaga más */
+.suelto text { fill: var(--hilo); font: italic 400 13px var(--serif); }
+.sitio { position: absolute; z-index: 2; top: calc(var(--y) * 1%); width: var(--etq); min-height: calc(40px - 18px * var(--apretado, 0)); transform: translateY(-50%); display: flex; flex-direction: column; justify-content: center; color: var(--tiza); text-decoration: none; transition: opacity .25s; }
+.sitio.izq { left: 0; padding-right: 18px; text-align: right; }
+.sitio.der { right: 0; padding-left: 18px; text-align: left; }
+.sitio .nombre { font: 700 1.0625rem/1.1 var(--serif); }
+.sitio[data-sitio="cursos"] { width: max-content; min-width: var(--etq); }   /* el rótulo largo crece hacia dentro: su chincheta se corre y no se corta */
+.sitio .fecha { max-height: calc(2.4em * (1 - var(--apretado, 0))); overflow: hidden; opacity: calc(1 - 1.5 * var(--apretado, 0)); font: 400 .8125rem/1.15 var(--sans); color: rgba(246, 239, 228, .8); }   /* la fecha se pliega según se aplasta el tablero */
+.chincheta { position: absolute; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%; background: var(--tiza); box-shadow: 0 2px 0 rgba(0, 0, 0, .3); transition: background .2s, transform .2s; }
+.izq .chincheta { right: 0; }
+.der .chincheta { left: 0; }
+.sitio.fuera { opacity: .5; }
+.sitio.tenso .chincheta { background: var(--detalle); transform: scale(1.35); }
+.sitio.dorado .chincheta { background: var(--guia); transform: scale(1.35); }
+
+/* Enredado: todo el tablero es un botón, con el cartel arriba */
+.desatar { position: absolute; inset: 0; z-index: 3; display: flex; align-items: flex-start; justify-content: center; padding: 0 8px; border: 0; background: none; color: var(--tiza); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.desatar[hidden] { display: none; }
+.desatar .cartel { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 0 14px 8px; background: var(--tapete); text-align: center; }
+.desatar .lema { font: italic 400 1.0625rem/1.2 var(--serif); }
+.desatar .accion { font: italic 700 1.4375rem/1.2 var(--serif); text-decoration: underline wavy var(--guia); text-decoration-thickness: 1.6px; text-underline-offset: 7px; }
+.desatar .otra { margin-top: 9px; font: 500 .875rem/1.2 var(--sans); color: rgba(246, 239, 228, .85); }
+.desatar:focus-visible { outline-offset: -4px; }
+html:not(.js) .desatar { display: none; }
+
+/* Relato: bloques de papel que pasan bajo el tablero; el que se está leyendo queda marcado */
+.relato { display: grid; gap: 10px; padding-top: 10px; }
+.bloque { padding: 14px 16px 15px 12px; border-left: 5px solid transparent; background: var(--ficha); color: var(--tinta); scroll-margin-top: calc(var(--alto-fijo) + 12px); }
+.js .bloque { color: var(--espera); transition: color .25s, border-color .25s; }
+.js .bloque.activo { color: var(--tinta); }
+/* La ficha que se lee queda clavada al tablero: una chincheta en su borde de arriba, como la de la foto */
+.ficha { position: relative; }
+.js .ficha::before { content: ""; position: absolute; left: 50%; top: -6px; width: 13px; height: 13px; margin-left: -6.5px; border-radius: 50%; background: var(--detalle); box-shadow: 0 2px 0 rgba(0, 0, 0, .3); opacity: 0; transform: scale(.4); transition: opacity .2s, transform .3s cubic-bezier(.22, 1, .36, 1); }
+.js .ficha.activo::before { opacity: 1; transform: none; }
+.bloque h3 { margin: 0; font: 700 1.3125rem/1.15 var(--serif); }
+.bloque .cargo { margin: 2px 0 8px; font: 500 .9375rem/1.3 var(--sans); }
+.bloque p { margin: 6px 0 0; max-width: 34em; }
+.bloque p b { font: 700 .9375rem/1.3 var(--sans); }
+.bloque ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; max-width: 34em; }
+.bloque .enlaces { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 22px; margin: 8px 0 0; font: 700 1rem/1 var(--sans); }
+.bloque .enlaces a { display: inline-block; padding: 14px 0; text-underline-offset: 4px; }
+.capitulo, .js .capitulo, .js .capitulo.activo { padding: 20px 0 2px; border-left: 0; background: none; color: var(--tiza); }
+.marca { font-variant-numeric: lining-nums; }   /* el 1 de la marca, a la altura de las mayúsculas, para que se lea como cifra */
+.capitulo h2 { margin: 0; font: 700 1.5rem/1.1 var(--serif); }
+.capitulo p { margin: 4px 0 0; font: italic 400 1.0625rem/1.35 var(--serif); }
+.capitulo .atajo { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 2px; }
+.relato { counter-reset: etapa; }
+.etapa { counter-increment: etapa; }
+.etapa h3::before { content: counter(etapa) ". "; color: var(--guia-papel); }
+
+/* Qué sé hacer: una rejilla de aptitudes (filas) y sitios (columnas). Cada fila es su hilo del tablero, estirado:
+   una chincheta en cada sitio donde se aplicó, con su forma. Al tocarla se abren sus frases. */
+.rejilla { --col: 28px; background: var(--ficha); }
+.rejilla .cabecera { display: grid; grid-template-columns: repeat(6, var(--col)); gap: 0; justify-content: end; align-items: end; padding: 14px 16px 10px 17px; }   /* gap: 0, para no heredar el hueco de la .cabecera de la página */
+.rejilla .cabecera span { display: flex; flex-direction: column; align-items: center; gap: 7px; font: 600 .8125rem/1 var(--sans); color: var(--gris); transition: color .25s; }
+.rejilla .cabecera b { font: inherit; writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
+.rejilla .cabecera span::after { content: ""; width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+.rejilla .cabecera .f::after { border-radius: 2px; }
+.rejilla .cabecera .p::after { width: 10px; border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.rejilla .cabecera .on { color: var(--tinta); }
+.rejilla .cabecera .on::after { background: var(--detalle-papel); }
+.rejilla .bloque { padding-top: 0; padding-bottom: 0; }
+.rejilla .bloque:last-child { padding-bottom: 4px; }
+.rejilla summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0 8px; padding: 10px 0; border-top: 1px solid var(--raya); list-style: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.rejilla summary::-webkit-details-marker { display: none; }
+.rejilla h3 { position: relative; padding-left: 17px; font: 700 .9375rem/1.25 var(--sans); }
+.rejilla h3::before { content: ""; position: absolute; left: 1px; top: .38em; width: 6px; height: 6px; border: solid currentColor; border-width: 0 2px 2px 0; transform: rotate(-45deg); }
+.rejilla details[open] h3::before { top: .26em; transform: rotate(45deg); }
+.rejilla details p { margin: 0 0 10px 17px; }
+.rejilla details p:last-child { margin-bottom: 14px; }
+.marcas { position: relative; display: grid; grid-template-columns: repeat(6, var(--col)); align-items: center; height: 20px; }
+.marcas::before { content: ""; position: absolute; top: 50%; left: calc((var(--a) - .5) * var(--col)); width: calc((var(--b) - var(--a)) * var(--col)); height: 2px; margin-top: -1px; background: #C3C9C4; transition: background .25s; }
+.marcas i { position: relative; grid-row: 1; grid-column: var(--c); justify-self: center; width: 10px; height: 10px; border-radius: 50%; background: var(--gris); box-shadow: 0 0 0 2px var(--ficha); transition: background .25s; }
+.marcas i.f { border-radius: 2px; }
+.marcas i.p { width: 12px; height: 11px; border-radius: 0; box-shadow: none; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.js .hebra.activo .marcas::before, .js .hebra.activo .marcas i { background: var(--detalle-papel); }
+@media (min-width: 980px) {
+  .rejilla { --col: 50px; box-shadow: 0 1px 0 rgba(0, 0, 0, .3); }
+  /* Si la columna no da para 50 px por sitio, las columnas se estrechan (hasta las 28 px del móvil) antes que los títulos */
+  @supports (width: 1cqi) { .rejilla { container-type: inline-size; --col: clamp(28px, (100cqi - 256px) / 6, 50px); } }
+  .rejilla .cabecera { padding: 16px 24px 10px; }
+  .rejilla .cabecera span { font-size: .875rem; }
+  .rejilla .bloque, .js .rejilla .bloque.activo { box-shadow: none; }
+  .rejilla h3 { font-size: 1rem; }
+}
+
+/* Cómo trabajo: un recorrido. Los cinco pasos, en una sola ficha, unidos por el hilo que guía en el tablero;
+   los ejemplos de cada sitio se abren al tocar. */
+.recorrido { --x: 36px; background: var(--ficha); padding: 4px 0; }
+.recorrido .etapa { position: relative; padding-top: 12px; padding-bottom: 6px; padding-left: calc(var(--x) + 24px); }
+.recorrido .etapa::after { content: ""; position: absolute; left: var(--x); top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--guia); }
+.recorrido .etapa:first-child::after { top: 24px; }
+.recorrido .etapa:last-child::after { bottom: auto; height: 24px; }
+.recorrido .etapa h3::before { content: counter(etapa); position: absolute; z-index: 1; left: var(--x); top: 9px; width: 30px; height: 30px; margin-left: -15px; box-sizing: border-box; display: grid; place-items: center; border: 2px solid var(--guia); border-radius: 50%; background: var(--ficha); color: var(--guia-papel); font: 700 .9375rem/1 var(--sans); transition: background .25s, color .25s; }
+.js .recorrido .etapa.activo h3::before { background: var(--guia); color: var(--sobre-guia); }
+.recorrido summary { display: inline-flex; align-items: center; gap: 9px; min-height: 40px; list-style: none; cursor: pointer; font: 600 .875rem/1.2 var(--sans); -webkit-tap-highlight-color: transparent; }
+.recorrido summary::-webkit-details-marker { display: none; }
+.recorrido summary::before { content: ""; width: 6px; height: 6px; margin: 0 1px 2px 1px; border: solid currentColor; border-width: 0 2px 2px 0; transform: rotate(-45deg); }
+.recorrido details[open] summary::before { margin-bottom: 4px; transform: rotate(45deg); }
+.recorrido details p { margin: 0 0 8px; }
+.recorrido details p:last-child { margin-bottom: 10px; }
+/* Saltos de línea: títulos equilibrados y párrafos sin una palabra sola en la última línea
+   (Modern Web Guidance, «improve-text-layout-and-legibility», e Impeccable). Donde no se admite, se ignora. */
+h2, h3 { text-wrap: balance; }
+.entrada p, .relato p, .relato li { text-wrap: pretty; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* En las frases que se abren, el nombre de cada sitio lleva a su ficha (y volver atrás devuelve a la rejilla) */
+.relato details p b a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: rgba(89, 99, 93, .5); }
+@media (hover: hover) { .relato details p b a:hover { text-decoration-color: currentColor; } }
+@media (min-width: 980px) {
+  .recorrido { --x: 40px; box-shadow: 0 1px 0 rgba(0, 0, 0, .3); }
+  .recorrido .bloque, .js .recorrido .bloque.activo { box-shadow: none; }
+}
+
+/* Contacto: descargar el CV es lo principal, con el mismo botón de arriba; el modo Excel queda en segundo plano */
+#contacto .enlaces .cv { min-height: 44px; display: inline-flex; align-items: center; gap: 6px; padding: 0 16px 0 13px; border-radius: 999px; background: var(--tapete); color: var(--tiza); text-decoration: none; box-shadow: 0 2px 0 rgba(0, 0, 0, .3); transition: background .2s, transform .2s; }
+#contacto .enlaces .cv .baja { color: var(--detalle); }   /* sobre el papel, el botón en azul marino: resalta más que el girasol */
+@media (hover: hover) { #contacto .enlaces .cv:hover { background: #26395A; transform: translateY(-1px); } }
+#contacto .cambio { padding: 0; border: 0; border-radius: 0; }
+#contacto .cambio span { text-decoration: underline; text-underline-offset: 4px; }
+
+/* Los nombres del tablero se tocan en una franja de 44 px aunque el tablero esté aplastado */
+.sitio::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 44px; margin-top: -22px; }
+@media (prefers-reduced-motion: reduce) { .js .ficha::before, .recorrido .etapa h3::before { transition: none; } }
+@media (min-width: 980px) { .js .ficha::before { top: -8px; width: 17px; height: 17px; margin-left: -8.5px; box-shadow: 0 3px 0 rgba(0, 0, 0, .3); } }
+
+/* La tabla: lo mismo, como un libro de hojas de cálculo. Cuadrícula, letras de columna, números de fila y una pestaña por parte */
+.hoja[hidden] { display: none; }
+.hoja { scroll-margin-top: 10px; margin-top: 14px; padding: 12px 16px 16px; background: var(--ficha); color: var(--tinta); font: 400 1rem/1.4 var(--sans); }
+.hoja .vuelta { margin: 2px 0 12px; }
+.hoja .vuelta.abajo { margin: 14px 0 0; }
+.hoja .archivo { display: flex; align-items: center; gap: 8px; margin: 2px 0 10px; color: var(--gris); font: 500 .9375rem/1.2 var(--sans); overflow-wrap: anywhere; }
+.hoja table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.hoja col.n { width: 26px; }
+.hoja col.a { width: 92px; }
+.hoja th, .hoja td { border: 1px solid var(--raya); padding: 8px 9px; vertical-align: top; text-align: left; font-weight: 400; overflow-wrap: break-word; }
+.hoja thead th, .hoja th.n { padding: 4px 0; background: #F1F3F1; color: var(--gris); font: 500 .75rem/1.3 var(--sans); text-align: center; }
+.hoja th.n { padding-top: 10px; }
+.hoja tbody { counter-reset: fila; }
+.hoja tbody tr { counter-increment: fila; }
+.hoja th.n::before { content: counter(fila); }
+.hoja tr.cab td { background: #DDEFE3; font-weight: 700; }
+.hoja tr.seccion td { background: #FFF06A; font: 700 1.1875rem/1.2 var(--sans); }
+.hoja tr.grupo td { background: #F6F8F6; font-weight: 700; }
+/* Pestañas abajo, como en una hoja de cálculo; se quedan a mano al pie de la pantalla mientras se recorre la hoja */
+.pestanas { position: sticky; bottom: 0; z-index: 2; display: flex; margin: 14px -16px -16px; padding-bottom: env(safe-area-inset-bottom, 0px); border-top: 1px solid var(--raya); background: #F1F3F1; }
+.pestana { flex: 1 1 auto; min-height: 46px; padding: 0 clamp(4px, 1.6vw, 8px); border: 0; border-right: 1px solid var(--raya); border-bottom: 3px solid transparent; background: none; color: var(--gris); cursor: pointer; font: 500 .9375rem/1.1 var(--sans); text-align: center; -webkit-tap-highlight-color: transparent; }
+.pestana:last-child { border-right: 0; }
+.pestana[aria-pressed="true"] { background: var(--ficha); border-bottom-color: var(--tapete); color: var(--tinta); }
+.hoja .pestana:focus-visible { outline-offset: -4px; }
+
+@media (hover: hover) {
+  .sitio:hover .nombre { text-decoration: underline; text-underline-offset: 3px; }
+  .desatar:hover .accion { text-decoration-style: solid; }
+}
+@media (min-width: 980px) {
+  :root { --etq: 150px; }
+  .cabecera { padding-top: 28px; }
+  .retrato { grid-row: 1 / span 4; }
+  .correo { grid-column: 1; }
+  .entrada { grid-column: 1; font-size: 1.125rem; }
+  .retrato, .retrato img { width: 96px; }
+  .retrato img { height: 120px; }
+  .escena { display: grid; grid-template-columns: minmax(0, 31rem) minmax(0, 36rem); gap: 56px; align-items: start; }
+  .mesa { top: 10px; height: auto; margin: 10px 0 0; }
+  .tablero { position: relative; top: 0; height: 410px; }
+  .fondo { display: none; }
+  .sitio { min-height: 46px; }
+  .sitio .nombre { font-size: 1.3125rem; }
+  .sitio .fecha { font-size: .9375rem; }
+  .suelto text { font-size: 14px; }
+  .relato { padding-top: 6px; }
+  .bloque { padding: 16px 24px 17px 19px; scroll-margin-top: 14px; }
+  .capitulo, .js .capitulo, .js .capitulo.activo { padding: 14px 0 2px; }
+  .capitulo:first-child { padding-top: 4px; }
+  .en-tabla .hoja { max-width: 60rem; }
+  .hoja col.n { width: 36px; }
+  .hoja col.a { width: 130px; }
+  .hoja { padding: 14px 26px 22px; }
+  .pestanas { margin: 16px -26px -22px; }
+  .pestana { flex: 0 1 auto; padding: 0 22px; }
+}
+/* Escritorio: el tablero es un objeto (tablón de fieltro con marco, colgado) y la página gana fondo y escala */
+@media (min-width: 980px) {
+  .cabecera, .cuerpo { max-width: 80rem; margin-inline: auto; }
+  .cabecera { padding-top: 46px; padding-bottom: 22px; column-gap: 44px; }
+  .quien { gap: 10px; }
+  .cabecera h1 { font-size: 4rem; }
+  .puesto { font-size: 1.4375rem; }
+  .donde, .arriba { font-size: 1.0625rem; }
+  .entrada { margin-top: 10px; max-width: 33em; font-size: 1.3125rem; line-height: 1.42; }
+  .retrato { margin: 4px 14px 0 0; }
+  .retrato, .retrato img { width: 190px; }
+  .retrato img { height: 238px; border-width: 7px; box-shadow: 2px 5px 0 rgba(0, 0, 0, .22), 0 22px 30px -14px rgba(0, 0, 0, .6); }
+  .retrato::before { top: -8px; width: 17px; height: 17px; margin-left: -8px; box-shadow: 0 3px 0 rgba(0, 0, 0, .3); }
+  .retrato figcaption { margin-top: 11px; font-size: 1.0625rem; }
+  .escena { grid-template-columns: minmax(0, 35rem) minmax(0, 36rem); gap: 48px; justify-content: space-between; }
+  .mesa { top: 18px; margin-top: 12px; padding: 30px 30px 36px; border: 13px solid #7B5230; border-image: linear-gradient(140deg, #A87848 0%, #6F4727 42%, #96683B 70%, #6A4325 100%) 1; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .4), inset 0 10px 22px -6px rgba(0, 0, 0, .5), 0 2px 0 rgba(0, 0, 0, .35), 0 30px 44px -22px rgba(0, 0, 0, .75); }
+  .tablero { height: clamp(410px, calc(100vh - 210px), 560px); }
+  .desatar .cartel { background: none; }
+  .sombra { stroke-width: 2.3; stroke: rgba(0, 0, 0, .3); transform: translate(1.5px, 4px); }
+  .cuerda { stroke-width: 2.3; }
+  .tramo.vivo .cuerda { stroke-width: 3.6; }
+  .tramo.guia .cuerda, .tramo.guia .sombra { stroke-width: 3; }
+  .tramo.guia.vivo .cuerda { stroke-width: 4.2; }
+  .chincheta { width: 14px; height: 14px; margin-top: -7px; box-shadow: 0 3px 0 rgba(0, 0, 0, .35); }
+  .izq .chincheta { right: -2px; }
+  .der .chincheta { left: -2px; }
+  .sitio.izq { padding-right: 22px; }
+  .sitio.der { padding-left: 22px; }
+  .bloque { box-shadow: 0 1px 0 rgba(0, 0, 0, .3); }
+  .js .bloque { transition: color .25s, border-color .25s, box-shadow .25s; }
+  .js .bloque.activo { box-shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 18px 28px -16px rgba(0, 0, 0, .7); }
+  .capitulo, .js .capitulo.activo, .uso, .js .uso.activo { box-shadow: none; }
+  .capitulo h2 { font-size: 2rem; }
+}
+@media (max-height: 540px) and (max-width: 979px) {
+  .mesa { position: relative; }
+  .fondo { position: static; box-shadow: none; }
+}
+@media (max-width: 350px) {
+  .sitio[data-sitio="cursos"] .nombre { font-size: .9375rem; }
+  .pestana { font-size: .8125rem; }
+  .retrato, .retrato img { width: 64px; }
+  .retrato img { height: 80px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cuerda, .tramo, .suelto, .sitio, .chincheta, .telon, .ampliada, .ampliada.cerrando, .retrato, .js .bloque { transition: none; }
+}
+
+/* ===== Pizarra: pared azul con grano de fieltro, una luz suave sobre el titular y el tablero, y bordes en penumbra ===== */
+:root { --fieltro: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23f)' opacity='.4'/%3E%3C/svg%3E"); }
+.mesa, .fondo { --tapete: #1E3048; }   /* el tablón, un azul algo más claro que la pared */
+@media (max-width: 979px) {
+  .mesa, .fondo { --tapete: #1B2B41; }
+  body { background-color: var(--tapete); background-image: var(--fieltro); background-blend-mode: soft-light; }
+  .fondo { background-color: var(--tapete); background-image: var(--fieltro); background-blend-mode: soft-light; }
+  .desatar .cartel { background: none; text-shadow: 0 0 6px var(--tapete), 0 0 14px var(--tapete), 0 0 22px var(--tapete); }
+}
+@media (min-width: 980px) {
+  body { background: var(--fieltro), radial-gradient(60% 55% at 32% 34%, rgba(126, 166, 206, .17) 0%, transparent 70%) fixed, radial-gradient(130% 110% at 45% 35%, transparent 52%, rgba(5, 10, 18, .5) 100%) fixed, linear-gradient(#1B2B41, #1B2B41) fixed; background-blend-mode: soft-light, normal, normal, normal; }
+  .mesa { --tapete: #1E3048; background: var(--fieltro), radial-gradient(120% 90% at 30% 10%, #243957 0%, #1E3048 55%, #172538 100%); background-blend-mode: soft-light, normal; }
+}
+
+/* La forma de la chincheta dice qué es cada sitio: círculo, trabajo; cuadrado, formación; triángulo, proyecto propio */
+.sitio[data-sitio="dam"] .chincheta, .sitio[data-sitio="derecho"] .chincheta, .sitio[data-sitio="cursos"] .chincheta { border-radius: 2px; }
+.sitio[data-sitio="aoe2radar"] .chincheta { border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.capitulo .leyenda { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 0 0 8px; font: 500 .875rem/1.3 var(--sans); color: var(--tiza); }
+.leyenda span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 7px; border-radius: 50%; background: currentColor; vertical-align: -1px; }
+.leyenda .formacion::before { border-radius: 2px; }
+.leyenda .propio::before { width: 11px; border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+
+/* Mientras el tablero está enredado, los rótulos se ven desenfocados y tiemblan; al ordenarse se enfocan */
+.sitio .nombre, .sitio .fecha { transition: filter .9s ease, text-shadow .9s ease, opacity .9s ease; }   /* el lema del cartel queda nítido: el lío lo enseña el tablero */
+.tablero:has(> .desatar:not([hidden])) .sitio .nombre { filter: blur(1.3px); text-shadow: 3px 0 0 rgba(246, 239, 228, .35), -2px 1px 0 rgba(246, 239, 228, .22); animation: temblor 2.4s ease-in-out infinite alternate; }
+.tablero:has(> .desatar:not([hidden])) .sitio:nth-child(odd) .nombre { animation-duration: 3.1s; animation-delay: -1.2s; }
+.tablero:has(> .desatar:not([hidden])) .sitio .fecha { filter: blur(2px); opacity: .55; }
+.suelto text { transition: opacity .9s ease; }
+.tablero:has(> .desatar:not([hidden])) .suelto text { filter: url(#borroso); opacity: .75; }   /* «por atar», borroso como los nombres mientras el tablero está enredado; con un filtro SVG, porque Safari no aplica blur() a un texto dentro del SVG */
+@keyframes temblor { 0% { transform: translate(0, 0); } 33% { transform: translate(.7px, -.5px); } 66% { transform: translate(-.6px, .5px); } 100% { transform: translate(.4px, .3px); } }
+@media (prefers-reduced-motion: reduce) { .sitio .nombre { animation: none !important; } }
+
+/* Hoja Aptitudes: una fila por aptitud */
+.hoja tr.nota td { color: var(--gris); font-style: italic; }
+.hoja td a { text-underline-offset: 3px; overflow-wrap: anywhere; }
+.hoja tr.apt td:first-of-type { font-weight: 700; overflow-wrap: normal; -webkit-hyphens: auto; hyphens: auto; }
+.hoja tr.apt td + td { line-height: 1.55; }
+</style>
+</head>
+<body>
+
+<header class="cabecera">
+  <div class="quien">
+    <h1>Jorge Guardiola Tomás</h1>
+    <p class="puesto">Consultor de procesos · IA aplicada</p>
+    <p class="donde">Valencia · presencial, híbrido o remoto<span class="pto"> · </span><a href="mailto:jorge@jorgeguardiola.es">jorge@jorgeguardiola.es</a></p>
+    <p class="arriba"><a class="cv" href="cv-jorge-guardiola.pdf"><svg class="baja" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 2.5v7.25M4.75 6.75 8 10l3.25-3.25M3 11.75v1.75h10v-1.75" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>Descargar CV</a><span class="salto" aria-hidden="true"></span><a href="https://www.linkedin.com/in/jorgeguardiola/">LinkedIn</a><a href="https://github.com/jguardiola-dev">GitHub</a></p>
+  </div>
+  <figure class="retrato" id="retrato" tabindex="0" role="button" aria-expanded="false" aria-label="Foto de Jorge Guardiola. Ampliar."><img src="jorge.jpg" width="360" height="450" alt="Jorge Guardiola al aire libre, con su perro"><figcaption>El de la izquierda.</figcaption></figure>
+  <div class="entrada">
+    <p>Analizo cómo funciona un negocio, detecto ineficiencias, optimizo procesos y automatizo lo repetitivo.</p>
+    <p>Vengo de consultoría de negocio y dirección de operaciones, y estudié desarrollo de software para poder encargarme yo de la parte técnica. Hoy utilizo la IA para analizar, automatizar y construir.</p>
+  </div>
+</header>
+
+<div class="cuerpo">
+  <div class="escena" id="escena">
+    <section class="mesa" id="mesa" aria-label="Tablero">
+      <div class="tablero" id="tablero">
+        <svg class="cuerdas" id="cuerdas" aria-hidden="true"><defs><filter id="borroso" x="-20%" y="-60%" width="140%" height="220%"><feGaussianBlur stdDeviation="1.3"/></filter></defs></svg>
+        <a class="sitio izq" href="#numer1ca" data-sitio="numer1ca" style="--y:8"><span class="nombre"><span class="marca">Numer1ca</span></span><span class="fecha">2019–2021</span><i class="chincheta"></i></a>
+        <a class="sitio der" href="#pokeshop" data-sitio="pokeshop" style="--y:23"><span class="nombre">PokéShop</span><span class="fecha">2023–2024</span><i class="chincheta"></i></a>
+        <a class="sitio izq" href="#dam" data-sitio="dam" style="--y:41"><span class="nombre">DAM</span><span class="fecha">2024–2026</span><i class="chincheta"></i></a>
+        <a class="sitio der" href="#iti" data-sitio="iti" style="--y:58"><span class="nombre">ITI</span><span class="fecha">2026</span><i class="chincheta"></i></a>
+        <a class="sitio izq" href="#aoe2radar" data-sitio="aoe2radar" style="--y:72"><span class="nombre">Proyectos</span><span class="fecha">aoe2radar<br>Cordel</span><i class="chincheta"></i></a>
+        <a class="sitio der" href="#cursos" data-sitio="cursos" style="--y:90"><span class="nombre">Certificaciones</span><i class="chincheta"></i></a>
+        <a class="sitio izq" href="#derecho" data-sitio="derecho" style="--y:87"><span class="nombre">Derecho</span><span class="fecha">en curso</span><i class="chincheta"></i></a>
+        <button type="button" class="desatar" id="desatar" hidden><span class="cartel"><span class="lema">Así llega un proceso.</span><span class="accion">Dame un toque y lo ordeno.</span><span class="otra">O sigue bajando: se ordena solo.</span></span></button>
+      </div>
+    </section>
+    <div class="fondo" id="fondo" aria-hidden="true"></div>
+
+    <main class="relato" id="relato">
+      <section class="bloque capitulo uso" data-ver="todo">
+        <p class="leyenda" aria-label="Leyenda del tablero"><span class="trabajo">Trabajo</span><span class="formacion">Formación</span><span class="propio">Proyecto propio</span></p>
+        <p class="atajo">¿Lo prefieres en una tabla? <button type="button" class="cambio" data-vista="tabla"><i class="rej" aria-hidden="true"></i><span>Pásamelo a Excel</span></button></p>
+      </section>
+      <section class="bloque capitulo" data-ver="todo">
+        <h2>Qué sé hacer</h2>
+      </section>
+      <div class="rejilla">
+        <div class="cabecera" aria-hidden="true"><span class="t" data-sitio="numer1ca"><b class="marca">Numer1ca</b></span><span class="t" data-sitio="pokeshop"><b>PokéShop</b></span><span class="f" data-sitio="dam"><b>DAM</b></span><span class="t" data-sitio="iti"><b>ITI</b></span><span class="p" data-sitio="aoe2radar"><b>Proyectos</b></span><span class="f" data-sitio="cursos"><b>Certificaciones</b></span></div>
+      <section class="bloque hebra" data-ver="hilo:procesos">
+        <details name="aptitudes">
+          <summary><h3>Mapeo de procesos</h3><span class="marcas" role="img" aria-label="en Numer1ca y PokéShop" style="--a:1;--b:2"><i class="t" style="--c:1"></i><i class="t" style="--c:2"></i></span></summary>
+          <p><b><a href="#numer1ca"><span class="marca">Numer1ca</span></a>.</b> Diagnóstico operativo y mapeo de procesos (AS-IS) en clínicas y hospitales veterinarios, con informe y plan de acción para cada cliente.</p>
+          <p><b><a href="#pokeshop">PokéShop</a>.</b> Rediseño de los flujos de trabajo del restaurante y procedimientos estándar de apertura, servicio y cierre de caja, para mejorar la operativa y el control del negocio.</p>
+        </details>
+      </section>
+      <section class="bloque hebra" data-ver="hilo:automatizacion">
+        <details name="aptitudes">
+          <summary><h3>Automatización de procesos</h3><span class="marcas" role="img" aria-label="en Numer1ca, PokéShop e ITI" style="--a:1;--b:4"><i class="t" style="--c:1"></i><i class="t" style="--c:2"></i><i class="t" style="--c:4"></i></span></summary>
+          <p><b><a href="#numer1ca"><span class="marca">Numer1ca</span></a>.</b> Automatización en Excel del análisis financiero y del reporting de las clínicas veterinarias: con los datos de su programa de gestión, las plantillas calculaban los indicadores y preparaban el informe.</p>
+          <p><b><a href="#pokeshop">PokéShop</a>.</b> Cálculo de pedidos automatizado en Excel: a partir del inventario y de los mínimos fijados por producto, la hoja devuelve el pedido completo a proveedores.</p>
+          <p><b><a href="#iti">ITI</a>.</b> Aplicación web que automatiza un análisis de inventario que a un consultor le llevaba horas de trabajo manual: se sube el Excel del negocio y en un minuto está hecho.</p>
+        </details>
+      </section>
+      <section class="bloque hebra" data-ver="hilo:ia">
+        <details name="aptitudes">
+          <summary><h3>IA generativa</h3><span class="marcas" role="img" aria-label="en ITI, aoe2radar y Certificaciones" style="--a:4;--b:6"><i class="t" style="--c:4"></i><i class="p" style="--c:5"></i><i class="f" style="--c:6"></i></span></summary>
+          <p><b><a href="#iti">ITI</a>.</b> Integración de un modelo de lenguaje (LLM) en un panel interactivo, que explica cada gráfico por separado y redacta un informe de consultoría que los tiene todos en cuenta. Desarrollo de la aplicación con IA agéntica (OpenCode), dirigiendo a los agentes con una especificación funcional.</p>
+          <p><b><a href="#aoe2radar">aoe2radar</a>.</b> Desarrollo con agentes de IA (Claude Code) del sistema de datos que cada noche analiza más de 12 millones de partidas al año de un videojuego de estrategia, y reorganización en capas del código de la aplicación.</p>
+          <p><b><a href="#cursos">Certificaciones</a>.</b> Tres cursos de Anthropic sobre el uso profesional de la IA: AI Fluency (cómo delegar trabajo en la IA y revisar lo que entrega), Claude 101 y capacidades y límites de los modelos.</p>
+        </details>
+      </section>
+      <section class="bloque hebra" data-ver="hilo:codigo">
+        <details name="aptitudes">
+          <summary><h3>Desarrollo de software</h3><span class="marcas" role="img" aria-label="en DAM, ITI y aoe2radar" style="--a:3;--b:5"><i class="f" style="--c:3"></i><i class="t" style="--c:4"></i><i class="p" style="--c:5"></i></span></summary>
+          <p><b><a href="#dam">DAM</a>.</b> InvManager: aplicación de escritorio para pymes que cubre todo el ciclo, de las compras y el stock a las ventas y la caja (Java 21, Swing, SQLite). Módulos independientes, un único motor de stock y de documentos, y reglas de negocio garantizadas por pruebas automáticas.</p>
+          <p><b><a href="#iti">ITI</a>.</b> Aplicación web completa desarrollada en solitario con Python (FastAPI), HTML, CSS y JavaScript, siguiendo Spec-Driven Development: primero la especificación y las pruebas automáticas, después el código.</p>
+          <p><b><a href="#aoe2radar">aoe2radar</a>.</b> Aplicación de escritorio en Java 21 (Swing), publicada con instalador y actualizaciones automáticas, y proceso de datos en Python (pandas) que se ejecuta cada noche en GitHub Actions.</p>
+        </details>
+      </section>
+      <section class="bloque hebra" data-ver="hilo:reporting">
+        <details name="aptitudes">
+          <summary><h3>Informes y cuadros de mando</h3><span class="marcas" role="img" aria-label="en Numer1ca, PokéShop, ITI y aoe2radar" style="--a:1;--b:5"><i class="t" style="--c:1"></i><i class="t" style="--c:2"></i><i class="t" style="--c:4"></i><i class="p" style="--c:5"></i></span></summary>
+          <p><b><a href="#numer1ca"><span class="marca">Numer1ca</span></a>.</b> Diseño de reporting para la toma de decisiones y seguimiento de KPI en las clínicas veterinarias a las que acompañaba.</p>
+          <p><b><a href="#pokeshop">PokéShop</a>.</b> Reporting de ventas del restaurante desde el ERP/TPV, con su configuración y gestión diaria.</p>
+          <p><b><a href="#iti">ITI</a>.</b> Panel interactivo con gráficos y tablas para revisar de un vistazo el análisis de inventario.</p>
+          <p><b><a href="#aoe2radar">aoe2radar</a>.</b> Estadística de la competición de un videojuego de estrategia, actualizada cada noche: distribuciones con mediana y percentiles, tasas de victoria por nivel de juego y por mapa, y tendencias de trece meses.</p>
+        </details>
+      </section>
+      <section class="bloque hebra" data-ver="hilo:numeros">
+        <details name="aptitudes">
+          <summary><h3>Análisis financiero</h3><span class="marcas" role="img" aria-label="en Numer1ca y PokéShop" style="--a:1;--b:2"><i class="t" style="--c:1"></i><i class="t" style="--c:2"></i></span></summary>
+          <p><b><a href="#numer1ca"><span class="marca">Numer1ca</span></a>.</b> Análisis financiero de clínicas y hospitales veterinarios en cada auditoría, para detectar ineficiencias y proponer mejoras.</p>
+          <p><b><a href="#pokeshop">PokéShop</a>.</b> Gestión de la cuenta de resultados (P&amp;L) del restaurante y negociación de las líneas de financiación.</p>
+        </details>
+      </section>
+      <section class="bloque hebra" data-ver="hilo:compraventas">
+        <details name="aptitudes">
+          <summary><h3>Due diligence</h3><span class="marcas" role="img" aria-label="en Numer1ca y PokéShop" style="--a:1;--b:2"><i class="t" style="--c:1"></i><i class="t" style="--c:2"></i></span></summary>
+          <p><b><a href="#numer1ca"><span class="marca">Numer1ca</span></a>.</b> Due diligence y análisis de datos en compraventas de clínicas (M&amp;A), con valoraciones a partir de sus flujos de caja.</p>
+          <p><b><a href="#pokeshop">PokéShop</a>.</b> Apoyo en el proceso de due diligence para la venta del negocio.</p>
+        </details>
+      </section>
+      <section class="bloque hebra" data-ver="hilo:personas">
+        <details name="aptitudes">
+          <summary><h3>Trato con clientes y gestión de equipo</h3><span class="marcas" role="img" aria-label="en Numer1ca y PokéShop" style="--a:1;--b:2"><i class="t" style="--c:1"></i><i class="t" style="--c:2"></i></span></summary>
+          <p><b><a href="#numer1ca"><span class="marca">Numer1ca</span></a>.</b> Trato directo con cada clínica y reuniones periódicas, con apoyo en la gestión de su personal y en la captación de clientes.</p>
+          <p><b><a href="#pokeshop">PokéShop</a>.</b> Dirección de un equipo de hasta 15 personas y negociación de condiciones con proveedores.</p>
+        </details>
+      </section>
+      <section class="bloque hebra" data-ver="hilo:inventario">
+        <details name="aptitudes">
+          <summary><h3>Gestión de inventario</h3><span class="marcas" role="img" aria-label="en PokéShop, DAM e ITI" style="--a:2;--b:4"><i class="t" style="--c:2"></i><i class="f" style="--c:3"></i><i class="t" style="--c:4"></i></span></summary>
+          <p><b><a href="#pokeshop">PokéShop</a>.</b> Control diario del stock con el ERP/TPV y gestión de proveedores.</p>
+          <p><b><a href="#dam">DAM</a>.</b> InvManager: cada cambio de stock queda en un libro de movimientos, con su motivo y su usuario; coste medio ponderado, recuentos con lector de códigos de barras y una reposición que dice qué pedir.</p>
+          <p><b><a href="#iti">ITI</a>.</b> Análisis de inventario para consultoría, con las reglas de negocio que antes aplicaba a mano un consultor.</p>
+        </details>
+      </section>
+      <section class="bloque hebra" data-ver="hilo:excel">
+        <details name="aptitudes">
+          <summary><h3>Excel</h3><span class="marcas" role="img" aria-label="en Numer1ca e ITI" style="--a:1;--b:4"><i class="t" style="--c:1"></i><i class="t" style="--c:4"></i></span></summary>
+          <p><b><a href="#numer1ca"><span class="marca">Numer1ca</span></a>.</b> Diseño e impartición de talleres de Excel y de gestión de negocio para veterinarios (perfiles no técnicos) en el Colegio de Veterinarios de Valencia.</p>
+          <p><b><a href="#iti">ITI</a>.</b> El Excel del negocio es la entrada de la aplicación: carga y validación de sus datos antes del análisis.</p>
+        </details>
+      </section>
+      </div>
+
+      <section class="bloque capitulo" data-ver="hilo:conductor">
+        <h2>Cómo trabajo</h2>
+      </section>
+      <div class="recorrido">
+        <section class="bloque etapa" data-ver="etapa:1" data-sitios="numer1ca pokeshop">
+          <h3>Entender el negocio</h3>
+          <p>Hago un diagnóstico operativo y mapeo los procesos tal como funcionan hoy (AS-IS), en trato directo con el cliente.</p>
+          <details name="pasos">
+            <summary><span><span class="vh">Ejemplos en </span><span class="marca">Numer1ca</span> y PokéShop</span></summary>
+            <p><b><a href="#numer1ca"><span class="marca">Numer1ca</span></a>.</b> Auditorías de personal, finanzas y procesos en decenas de clínicas.</p>
+            <p><b><a href="#pokeshop">PokéShop</a>.</b> Gestión operativa y financiera del restaurante.</p>
+          </details>
+        </section>
+        <section class="bloque etapa" data-ver="etapa:2" data-sitios="numer1ca pokeshop">
+          <h3>Analizar los números</h3>
+          <p>Analizo los datos financieros y operativos para detectar ineficiencias.</p>
+          <details name="pasos">
+            <summary><span><span class="vh">Ejemplos en </span><span class="marca">Numer1ca</span> y PokéShop</span></summary>
+            <p><b><a href="#numer1ca"><span class="marca">Numer1ca</span></a>.</b> Análisis financiero de cada clínica y valoraciones para compraventas.</p>
+            <p><b><a href="#pokeshop">PokéShop</a>.</b> Cuenta de resultados (P&amp;L) e informes de ventas.</p>
+          </details>
+        </section>
+        <section class="bloque etapa" data-ver="etapa:3" data-sitios="numer1ca iti">
+          <h3>Especificar antes de construir</h3>
+          <p>Dejo por escrito los requisitos y los criterios de aceptación antes de construir.</p>
+          <details name="pasos">
+            <summary><span><span class="vh">Ejemplos en </span><span class="marca">Numer1ca</span> e ITI</span></summary>
+            <p><b><a href="#numer1ca"><span class="marca">Numer1ca</span></a>.</b> Un informe y un plan de acción para cada clínica.</p>
+            <p><b><a href="#iti">ITI</a>.</b> Reglas de negocio, criterios de aceptación y pruebas, escritos antes que el código.</p>
+          </details>
+        </section>
+        <section class="bloque etapa" data-ver="etapa:4" data-sitios="numer1ca pokeshop iti">
+          <h3>Automatizar</h3>
+          <p>Automatizo lo que se hacía a mano, con una hoja de Excel o con una aplicación con IA, según el caso.</p>
+          <details name="pasos">
+            <summary><span><span class="vh">Ejemplos en </span><span class="marca">Numer1ca</span>, PokéShop e ITI</span></summary>
+            <p><b><a href="#numer1ca"><span class="marca">Numer1ca</span></a>.</b> Análisis financiero y reporting de las clínicas, automatizados en Excel.</p>
+            <p><b><a href="#pokeshop">PokéShop</a>.</b> Cálculo de pedidos automatizado a partir del inventario.</p>
+            <p><b><a href="#iti">ITI</a>.</b> Aplicación web que automatiza un análisis de inventario.</p>
+          </details>
+        </section>
+        <section class="bloque etapa" data-ver="etapa:5" data-sitios="numer1ca pokeshop">
+          <h3>Implantar y formar</h3>
+          <p>Implanto la solución con el equipo y formo a perfiles no técnicos.</p>
+          <details name="pasos">
+            <summary><span><span class="vh">Ejemplos en </span><span class="marca">Numer1ca</span> y PokéShop</span></summary>
+            <p><b><a href="#numer1ca"><span class="marca">Numer1ca</span></a>.</b> Acompañamiento estratégico a las clínicas; cursos de gestión de negocio y de Excel.</p>
+            <p><b><a href="#pokeshop">PokéShop</a>.</b> Implantación de herramientas digitales y de procedimientos de trabajo.</p>
+          </details>
+        </section>
+      </div>
+
+      <section class="bloque capitulo" data-ver="todo">
+        <h2>Dónde he trabajado</h2>
+      </section>
+
+      <article class="bloque ficha" id="iti" data-ver="sitio:iti" data-fecha="sep.–dic. 2026">
+        <h3>ITI, Instituto Tecnológico de Informática</h3>
+        <p class="cargo">Centro tecnológico · Prácticas del ciclo DAM<span class="cuando">, de septiembre a diciembre de 2026</span></p>
+        <ul>
+          <li>Desarrollé en solitario una aplicación web que automatiza un análisis de inventario que a un consultor le llevaba horas de trabajo manual: se sube el Excel del negocio y en un minuto hay un panel interactivo con gráficos y tablas.</li>
+          <li>Integré un modelo de lenguaje (LLM) que explica cada gráfico al pulsar un botón y redacta un informe de consultoría que los tiene todos en cuenta.</li>
+          <li>Trabajé con IA agéntica (OpenCode): escribí primero la especificación funcional (reglas de negocio, criterios de aceptación y pruebas automáticas) y con ella dirigí a los agentes que escriben el código (Spec-Driven Development).</li>
+          <li>Tecnología: Python (FastAPI), HTML, CSS y JavaScript. Planificación incremental en Azure DevOps.</li>
+        </ul>
+      </article>
+
+      <article class="bloque ficha" id="pokeshop" data-ver="sitio:pokeshop" data-fecha="2023–2024">
+        <h3>PokéShop</h3>
+        <p class="cargo">Restaurante de poke · Director de Operaciones<span class="cuando">, 2023–&#8288;2024</span></p>
+        <ul>
+          <li>Dirigí el negocio: cuenta de resultados (P&amp;L), local y equipo de hasta 15 personas.</li>
+          <li>Automaticé el cálculo de pedidos: a partir del inventario y de los mínimos fijados por producto, una hoja de Excel devuelve el pedido completo.</li>
+          <li>Llevé el día a día del sistema de gestión y caja (ERP/TPV): control de stock, configuración e informes de ventas.</li>
+          <li>Digitalicé gestiones manuales y estandaricé la operativa del local con procedimientos de apertura, servicio y cierre de caja.</li>
+          <li>Negocié las condiciones con proveedores y las líneas de financiación.</li>
+          <li>Apoyé el proceso de due diligence para la venta del negocio.</li>
+        </ul>
+      </article>
+
+      <article class="bloque ficha" id="numer1ca" data-ver="sitio:numer1ca" data-fecha="2019–2021">
+        <h3><span class="marca">Numer1ca</span></h3>
+        <p class="cargo">Consultora financiera especializada en el sector veterinario · Consultor de negocio<span class="cuando">, 2019–&#8288;2021</span></p>
+        <ul>
+          <li>Audité de forma integral decenas de clínicas y hospitales veterinarios (personal, finanzas y procesos), con diagnóstico operativo y mapeo de procesos. Cada auditoría terminaba en un informe y un plan de acción para el cliente.</li>
+          <li>Presté acompañamiento estratégico a varias de ellas, con reuniones periódicas, seguimiento de KPI, apoyo en gestión de personal y captación de clientes y diseño de reporting para la toma de decisiones.</li>
+          <li>Automaticé en Excel el análisis financiero y el reporting de las clínicas: a partir de los datos de su programa de gestión, unas plantillas calculaban los indicadores y preparaban el informe.</li>
+          <li>Analicé los datos en valoraciones y compraventas de clínicas (due diligence, M&amp;A).</li>
+          <li>Diseñé e impartí cursos de gestión de negocio y de Excel, en formato taller, para veterinarios (perfiles no técnicos) en el Colegio de Veterinarios de Valencia.</li>
+        </ul>
+      </article>
+
+      <section class="bloque capitulo" data-ver="todo">
+        <h2>Formación y proyectos propios</h2>
+      </section>
+      <article class="bloque ficha" id="dam" data-ver="sitio:dam" data-fecha="2024–2026">
+        <h3>Desarrollo de Aplicaciones Multiplataforma (DAM)</h3>
+        <p class="cargo">Ciclo Formativo de Grado Superior, ILERNA<span class="cuando">, 2024–&#8288;2026</span></p>
+        <ul>
+          <li>Proyecto final: InvManager, aplicación de gestión de inventario para pymes (Java 21, Swing, JDBC, SQLite).</li>
+        </ul>
+        <p class="enlaces"><a href="/invmanager/">Ver InvManager</a></p>
+      </article>
+      <article class="bloque ficha" id="derecho" data-ver="sitio:derecho" data-fecha="En curso">
+        <h3>Grado en Derecho</h3>
+        <p class="cargo">Universidad Católica de Valencia<span class="cuando">, en curso</span></p>
+        <ul>
+          <li>Matriculado en 2026/27 de las últimas asignaturas y del Trabajo de Fin de Grado.</li>
+          <li>Además, me estoy formando en gobierno, riesgo y cumplimiento (GRC).</li>
+        </ul>
+      </article>
+      <article class="bloque ficha" id="cursos" data-ver="sitio:cursos" data-fecha="">
+        <h3>Certificaciones</h3>
+        <p class="cargo">Scrum.org, Cambridge y Anthropic</p>
+        <ul>
+          <li>Professional Scrum Master I (Scrum.org, julio de 2026).</li>
+          <li>Cambridge English: Legal (ILEC), nivel C1.</li>
+          <li>Cursos de Anthropic: AI Fluency: Framework &amp; Foundations, Claude 101 y AI Capabilities and Limitations (junio de 2026).</li>
+        </ul>
+      </article>
+      <article class="bloque ficha" id="datos" data-ver="todo" data-fecha="">
+        <h3>Idiomas</h3>
+        <ul>
+          <li>Castellano y valenciano nativos. Inglés C1. Francés básico.</li>
+          <li>Último curso de bachillerato (senior year) en Turner High School, Oklahoma (EE. UU.).</li>
+        </ul>
+      </article>
+      <article class="bloque ficha" id="aoe2radar" data-ver="sitio:aoe2radar" data-fecha="">
+        <h3>aoe2radar</h3>
+        <p class="cargo">Proyecto propio</p>
+        <ul>
+          <li>Aplicación de escritorio para seguir la competición de un videojuego de estrategia, Age of Empires II (Java 21, Swing).</li>
+          <li>Cada noche, un proceso automatizado (Python, pandas, GitHub Actions) analiza los datos públicos de la competición: más de 12 millones de partidas en el último año y una clasificación de más de 260.000 jugadores.</li>
+          <li>Calcula distribuciones con mediana y percentiles, tasas de victoria segmentadas por nivel de juego y por mapa, tendencias de trece meses y la correlación entre la clasificación individual y la de equipos. Descarta las partidas abandonadas y exige un tamaño mínimo de muestra.</li>
+          <li>Publicada con instalador y actualizaciones automáticas.</li>
+          <li>Reorganicé el código en capas trabajando con un agente de IA (Claude Code).</li>
+        </ul>
+        <p class="enlaces"><a href="/aoe2radar/es/">Ver aoe2radar</a></p>
+      </article>
+      <article class="bloque ficha" id="cordel" data-ver="sitio:aoe2radar" data-fecha="">
+        <h3>Cordel</h3>
+        <p class="cargo">Proyecto propio</p>
+        <ul>
+          <li>Aplicación de escritorio para Windows: una cuerda escondida en el borde de la pantalla donde se cuelgan solas las capturas de pantalla y lo que se copia, con buscador (también dentro del texto de las capturas) y editor de capturas.</li>
+          <li>Ligera (un solo ejecutable de 2 MB, en Rust) y sin conexión: nada sale del equipo.</li>
+        </ul>
+        <p class="enlaces"><a href="/cordel/">Ver Cordel</a></p>
+      </article>
+
+      <article class="bloque ficha" id="contacto" data-ver="todo">
+        <h3>Dame un toque y hablamos.</h3>
+        <p class="enlaces"><a class="cv" href="cv-jorge-guardiola.pdf"><svg class="baja" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 2.5v7.25M4.75 6.75 8 10l3.25-3.25M3 11.75v1.75h10v-1.75" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>Descargar CV</a><a href="mailto:jorge@jorgeguardiola.es">jorge@jorgeguardiola.es</a><a href="https://www.linkedin.com/in/jorgeguardiola/">LinkedIn</a><a href="https://github.com/jguardiola-dev">GitHub</a><button type="button" class="cambio" data-vista="tabla"><i class="rej" aria-hidden="true"></i><span>Ver en modo Excel</span></button></p>
+      </article>
+    </main>
+  </div>
+
+  <div class="hoja" id="hoja" hidden>
+    <p class="vuelta"><button type="button" class="cambio" data-vista="tablero">Volver al tablero</button></p>
+    <p class="archivo"><i class="rej" aria-hidden="true"></i>CV_Jorge_Guardiola_final_v3.xlsx</p>
+    <table>
+      <colgroup><col class="n"><col class="a"><col></colgroup>
+      <thead><tr><th></th><th>A</th><th>B</th></tr></thead>
+    </table>
+    <p class="vuelta abajo"><button type="button" class="cambio" data-vista="tablero">Volver al tablero</button></p>
+    <div class="pestanas" role="group" aria-label="Hojas">
+      <button type="button" class="pestana" data-hoja="aptitudes" aria-pressed="true">Qué sé hacer</button>
+      <button type="button" class="pestana" data-hoja="trabajo" aria-pressed="false">Cómo trabajo</button>
+      <button type="button" class="pestana" data-hoja="experiencia" aria-pressed="false">Experiencia</button>
+      <button type="button" class="pestana" data-hoja="formacion" aria-pressed="false">Formación</button>
+    </div>
+  </div>
+</div>
+
+<div class="telon" id="telon" hidden></div>
+<figure class="ampliada" id="ampliada" tabindex="-1" hidden><img alt="Jorge Guardiola al aire libre, con su perro" width="1200" height="1501"><figcaption>El de la izquierda.</figcaption></figure>
+
+<script>
+(function () {
+  'use strict';
+  var raiz = document.documentElement;
+  var mesa = document.getElementById('mesa');
+  var tablero = document.getElementById('tablero');
+  var svg = document.getElementById('cuerdas');
+  var tapa = document.getElementById('desatar');
+  var sitios = [].slice.call(tablero.querySelectorAll('.sitio'));
+  var bloques = [].slice.call(document.querySelectorAll('.bloque'));
+  var columnas = [].slice.call(document.querySelectorAll('.rejilla .cabecera [data-sitio]'));
+  var quieto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var enAncho = window.matchMedia('(min-width: 980px)');
+  var NS = 'http://www.w3.org/2000/svg';
+
+  // Cada hilo une, por orden, los sitios donde aparece. Tramo: [desde, hasta, holgura, vuelta lateral].
+  // El último, el conductor, es cómo trabajo: va más tenso y en el azul de guía.
+  var HILOS = [
+    { id: 'procesos', t: [['numer1ca', 'pokeshop', 30, 0]] },
+    { id: 'numeros', t: [['numer1ca', 'pokeshop', 58, 0]] },
+    { id: 'compraventas', t: [['numer1ca', 'pokeshop', 88, 0]] },
+    { id: 'reporting', t: [['numer1ca', 'pokeshop', 120, 0], ['pokeshop', 'iti', 18, 74], ['iti', 'aoe2radar', 100, 0]] },
+    { id: 'personas', t: [['numer1ca', 'pokeshop', 154, 0]] },
+    { id: 'excel', t: [['numer1ca', 'iti', 40, 0]] },
+    { id: 'inventario', t: [['pokeshop', 'dam', 46, 0], ['dam', 'iti', 26, 0]] },
+    { id: 'automatizacion', t: [['numer1ca', 'pokeshop', 72, 0], ['pokeshop', 'iti', 28, 118]] },
+    { id: 'codigo', t: [['dam', 'iti', 64, 0], ['iti', 'aoe2radar', 30, 0]] },
+    { id: 'ia', t: [['iti', 'aoe2radar', 66, 0], ['aoe2radar', 'cursos', 36, 0]] },
+    { id: 'conductor', guia: true, t: [['numer1ca', 'pokeshop', 9, 0], ['pokeshop', 'iti', 8, 26]] }
+  ];
+  var tramos = [], P = {}, f = 1, fy = 1, suelto = null;
+  var aprieta = false, prieto = 0;   // si el tablero se aplasta al bajar (móvil) y cuánto lo está ahora, de 0 a 1
+  var estado = { tipo: 'todo' }, bloqueActivo = null;
+  var enLio = false, lioEnMarcha = false, atado = false, semilla = 7;
+
+  function nodo(nombre, clase) { var n = document.createElementNS(NS, nombre); if (clase) n.setAttribute('class', clase); return n; }
+  function crear() {
+    HILOS.forEach(function (h) {
+      h.t.forEach(function (t) {
+        var g = nodo('g', h.guia ? 'tramo guia' : 'tramo');
+        var ps = ['sombra', 'cuerda', 'toque'].map(function (c) { var p = nodo('path', c); g.appendChild(p); return p; });
+        svg.appendChild(g);
+        g.addEventListener('click', function () { irA('hilo:' + h.id); });
+        tramos.push({ hilo: h.id, guia: !!h.guia, a: t[0], b: t[1], s: t[2], l: t[3], g: g, ps: ps, k: 1, v: 0, obj: 1 });
+      });
+    });
+    suelto = nodo('g', 'suelto');
+    suelto.appendChild(nodo('path', 'sombra'));
+    suelto.appendChild(nodo('path', 'cuerda'));
+    var txt = nodo('text'); txt.textContent = 'por atar'; suelto.appendChild(txt);
+    svg.insertBefore(suelto, svg.firstChild);
+  }
+  // Mide dónde está cada chincheta. Con «enOrden» recalcula también la escala del tablero.
+  function medir(enOrden) {
+    var r = tablero.getBoundingClientRect();
+    sitios.forEach(function (el) {
+      var c = el.querySelector('.chincheta').getBoundingClientRect();
+      P[el.getAttribute('data-sitio')] = { x: c.left + c.width / 2 - r.left, y: c.top + c.height / 2 - r.top, lado: el.classList.contains('izq') ? 1 : -1 };
+    });
+    if (enOrden) { f = Math.abs(P.pokeshop.x - P.numer1ca.x) / 152; fy = Math.min(1, tablero.clientHeight / 440); }
+  }
+  function trazar(t) {
+    var A = P[t.a], B = P[t.b];
+    var mx = (A.x + B.x) / 2, my = (A.y + B.y) / 2;
+    var cx = t.l ? A.x + A.lado * t.l * f : mx, cy = my + t.s * f * fy;
+    var d = 'M' + A.x.toFixed(1) + ' ' + A.y.toFixed(1) + ' Q' + (mx + (cx - mx) * t.k).toFixed(1) + ' ' + (my + (cy - my) * t.k).toFixed(1) + ' ' + B.x.toFixed(1) + ' ' + B.y.toFixed(1);
+    t.ps[0].setAttribute('d', d); t.ps[1].setAttribute('d', d); t.ps[2].setAttribute('d', d);
+  }
+  // El cabo suelto de Derecho cuelga hacia abajo con el tablero entero y se tumba hacia la derecha según se aplasta,
+  // para no salirse de la franja. Son dos formas con los mismos puntos y se mezclan según lo aplastado que esté.
+  function trazarSuelto() {
+    var D = P.derecho, g = f * Math.max(.5, fy), i, k, tope, n = [];
+    var L = Math.max(10, Math.min(28, f * 152 - 68));   // largo del cabo tumbado, según el hueco que queda entre las dos columnas
+    var colgado = [8 * g, 10 * g, 30 * g, 4 * g, 34 * g, 20 * g, -14 * g, 16 * g, 2 * g, 24 * g, 44 * g, 46 * g];
+    var tumbado = [.3 * L, 0, .35 * L, 12, .6 * L, 12, .3 * L, -3, .4 * L, -1, L + 6, 16];
+    for (i = 0; i < 12; i++) n.push(colgado[i] * (1 - prieto) + tumbado[i] * prieto);
+    if (aprieta) {   // en el móvil, nada por debajo del borde del tablero
+      tope = tablero.clientHeight - 8 - D.y;
+      if (tope > 0 && n[11] > tope) { k = tope / n[11]; for (i = 1; i < 12; i += 2) n[i] *= k; }
+    }
+    function c(desde, hasta) { return n.slice(desde, hasta).map(function (v) { return v.toFixed(1); }).join(' '); }
+    var d = 'M' + D.x.toFixed(1) + ' ' + D.y.toFixed(1) + ' c' + c(0, 6) + ' s' + c(6, 10);
+    suelto.childNodes[0].setAttribute('d', d);
+    suelto.childNodes[1].setAttribute('d', d);
+    suelto.childNodes[2].setAttribute('x', (D.x + n[10]).toFixed(1));
+    suelto.childNodes[2].setAttribute('y', (D.y + n[11]).toFixed(1));
+  }
+  function dibujar() { medir(true); tramos.forEach(trazar); trazarSuelto(); }
+
+  // Muelle: al tensarse, los tramos vibran un momento.
+  var corriendo = false, ultimo = 0;
+  function paso(ahora) {
+    var dt = Math.min(.032, (ahora - ultimo) / 1000), sigue = false;
+    ultimo = ahora;
+    if (enLio) { corriendo = false; return; }
+    tramos.forEach(function (t) {
+      var dx = t.k - t.obj;
+      if (Math.abs(dx) > .003 || Math.abs(t.v) > .02) {
+        t.v += (-170 * dx - 13 * t.v) * dt;
+        t.k += t.v * dt;
+        sigue = true;
+        trazar(t);
+      } else if (t.k !== t.obj) { t.k = t.obj; t.v = 0; trazar(t); }
+    });
+    if (sigue) requestAnimationFrame(paso); else corriendo = false;
+  }
+  function animar() {
+    if (enLio) return;
+    if (quieto) { tramos.forEach(function (t) { t.k = t.obj; t.v = 0; trazar(t); }); return; }
+    if (!corriendo) { corriendo = true; ultimo = performance.now(); requestAnimationFrame(paso); }
+  }
+
+  // Enredo: el tablero espera hecho un ovillo, meciéndose, hasta que alguien lo toca o empieza a bajar.
+  function azar(s) { return function () { s |= 0; s = s + 0x6D2B79F5 | 0; var t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  var ORDEN = ['numer1ca', 'pokeshop', 'dam', 'iti', 'aoe2radar', 'cursos', 'derecho'];   // los rótulos salen del ovillo por orden de tiempo
+  function holgura() { return 1.05 / Math.max(1, f); }
+  function suave(p) { return p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; }
+  function rebote(p) { var c = 1.15, x = p - 1; return 1 + (c + 1) * x * x * x + c * x * x; }
+  function nuevoLio(sem) {
+    var r = azar(sem), W = tablero.clientWidth, H = tablero.clientHeight;
+    sitios.forEach(function (el) {
+      var id = el.getAttribute('data-sitio'), p = P[id];
+      el._lio = { dx: W / 2 + (r() - .5) * W * .26 - p.x, dy: H * .54 + (r() - .5) * H * .2 - p.y, rot: (r() - .5) * 58 };
+      el._turno = ORDEN.indexOf(id);
+    });
+  }
+  function ponerSitio(el, q, mx, my, mr) {
+    var d = el._lio;
+    el.style.transform = (q || mx) ? 'translate(' + (d.dx * q + (mx || 0)).toFixed(1) + 'px,' + (d.dy * q + (my || 0)).toFixed(1) + 'px) translateY(-50%) rotate(' + (d.rot * q + (mr || 0)).toFixed(2) + 'deg)' : '';
+  }
+  function soltarSitios() { sitios.forEach(function (el) { el.style.transform = ''; }); }
+  function hilosCon(k) { medir(false); tramos.forEach(function (t) { t.k = k; t.v = 0; trazar(t); }); trazarSuelto(); }
+  function poner(q) { sitios.forEach(function (el) { ponerSitio(el, q); }); hilosCon(1 + holgura() * q); }
+  function prepararLio() { soltarSitios(); medir(true); nuevoLio(semilla); }
+  function bloquearSitios(si) {
+    sitios.forEach(function (el) {
+      if (si) { el.setAttribute('inert', ''); el.setAttribute('tabindex', '-1'); }
+      else { el.removeAttribute('inert'); el.removeAttribute('tabindex'); }
+    });
+  }
+  var meciendo = false, aLaVista = true, tMecer = 0, ultimoMecer = 0;
+  function vaiven(i, t) { return [Math.sin(t * 1.3 + i * 1.7) * 4, Math.cos(t * 1.1 + i * 2.3) * 4, Math.sin(t * .9 + i) * 2.4]; }
+  function mecer(ahora) {
+    if (!atado || lioEnMarcha || !aLaVista) { meciendo = false; return; }
+    if (ahora - ultimoMecer > 30) {
+      ultimoMecer = ahora; tMecer = ahora / 1000;
+      sitios.forEach(function (el, i) { var v = vaiven(i, tMecer); ponerSitio(el, 1, v[0], v[1], v[2]); });
+      hilosCon(1 + holgura() * (1 + .06 * Math.sin(tMecer * 1.7)));
+    }
+    requestAnimationFrame(mecer);
+  }
+  function empezarAMecer() { if (!meciendo && atado && !lioEnMarcha && aLaVista && !quieto) { meciendo = true; requestAnimationFrame(mecer); } }
+  if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { aLaVista = es[0].isIntersecting; empezarAMecer(); }).observe(tablero);
+
+  // Cada rótulo vuelve a su sitio en su turno; al acabar, los hilos vibran un momento.
+  function recorrer(alTerminar) {
+    var PASO = 170, DUR = 1050, COLA = 560, fin = PASO * (sitios.length - 1) + DUR, t0 = null;
+    lioEnMarcha = true;
+    function cuadro(ahora) {
+      if (t0 === null) t0 = ahora;
+      var t = ahora - t0, g = Math.min(1, t / fin), k;
+      sitios.forEach(function (el) { ponerSitio(el, 1 - rebote(Math.max(0, Math.min(1, (t - el._turno * PASO) / DUR)))); });
+      if (t <= fin) k = 1 + holgura() * Math.pow(1 - g, 1.6);
+      else { var tau = (t - fin) / 1000; k = 1 - .2 * Math.exp(-7 * tau) * Math.sin(21 * tau); }
+      hilosCon(k);
+      if (t < fin + COLA) { requestAnimationFrame(cuadro); return; }
+      lioEnMarcha = false;
+      alTerminar();
+    }
+    requestAnimationFrame(cuadro);
+  }
+  function atar() {
+    if (quieto || lioEnMarcha || atado) return;
+    atado = true; enLio = true;
+    bloquearSitios(true);
+    prepararLio();
+    pintar();
+    poner(1);
+    tapa.hidden = false;
+    empezarAMecer();
+  }
+  function desatar() {
+    if (!atado || lioEnMarcha) return;
+    if (document.activeElement === tapa) tapa.blur();
+    if (meciendo) sitios.forEach(function (el, i) { var v = vaiven(i, tMecer), d = el._lio; el._lio = { dx: d.dx + v[0], dy: d.dy + v[1], rot: d.rot + v[2] }; });
+    atado = false;
+    tapa.hidden = true;
+    bloquearSitios(false);
+    recorrer(function () {
+      soltarSitios();
+      medir(true);
+      tramos.forEach(function (t) { t.k = 1; t.v = 0; trazar(t); });
+      trazarSuelto();
+      setTimeout(function () { if (!lioEnMarcha && !atado) { enLio = false; pintar(); } }, 240);
+    });
+  }
+
+  // El tablero enseña lo que dice el bloque que se está leyendo.
+  // estado: {tipo:'todo'} | {tipo:'sitio', id} | {tipo:'hilo', id} | {tipo:'etapa', sitios:[…]}
+  function pintar() {
+    var e = enLio ? { tipo: 'todo' } : estado;
+    var hilo = e.tipo === 'hilo' ? e.id : e.tipo === 'etapa' ? 'conductor' : null;
+    var sitio = e.tipo === 'sitio' ? e.id : null;
+    var guia = hilo === 'conductor', enHilo = {};
+    tramos.forEach(function (t) {
+      var vivo = hilo ? t.hilo === hilo : sitio ? (t.a === sitio || t.b === sitio) : false;
+      t.g.setAttribute('class', 'tramo' + (t.guia ? ' guia' : '') + (vivo ? ' vivo' : (hilo || sitio) ? (guia ? ' apagado suave' : ' apagado') : ''));
+      t.obj = hilo && t.hilo === hilo ? 0 : 1;
+      if (vivo) { svg.appendChild(t.g); if (hilo) { enHilo[t.a] = 1; enHilo[t.b] = 1; } }
+    });
+    if (e.tipo === 'etapa') { enHilo = {}; e.sitios.forEach(function (s) { enHilo[s] = 1; }); }
+    suelto.setAttribute('class', 'suelto' + ((hilo || (sitio && sitio !== 'derecho')) ? (guia ? ' apagado suave' : ' apagado') : ''));
+    sitios.forEach(function (el) {
+      var id = el.getAttribute('data-sitio');
+      el.classList.toggle('fuera', (!!hilo && !enHilo[id] && (!guia || e.tipo === 'etapa')) || (!!sitio && sitio !== id));
+      el.classList.toggle('tenso', (!!hilo && !guia && !!enHilo[id]) || sitio === id);
+      el.classList.toggle('dorado', guia && !!enHilo[id]);
+    });
+    columnas.forEach(function (el) { el.classList.toggle('on', !!hilo && !guia && !!enHilo[el.getAttribute('data-sitio')]); });   // la rejilla de «Qué sé hacer» marca los sitios del hilo encendido
+    animar();
+  }
+  function leerEstado(el) {
+    var v = (el.getAttribute('data-ver') || 'todo').split(':');
+    if (v[0] === 'etapa') return { tipo: 'etapa', sitios: (el.getAttribute('data-sitios') || '').split(' ') };
+    return v[0] === 'todo' ? { tipo: 'todo' } : { tipo: v[0], id: v[1] };
+  }
+  // El bloque que se lee es el último que ha cruzado una línea situada un poco por debajo del tablero.
+  var mirando = false, relato = document.getElementById('relato'), fondo = document.getElementById('fondo');
+  var altoMax = 0, altoMin = 0, altoAhora = -1;
+  function fijoAbajo(vh) {   // lo que ocupa el tablero cuando ya está aplastado y fijo arriba; 0 si no se queda fijo
+    return aprieta ? Math.min(altoMin + 14, vh * .6) : 0;
+  }
+  function lineaDe(vh, borde) { return enAncho.matches ? vh * .4 : borde + (vh - borde) * .32; }
+  // En el móvil el tablero mide lo que asoma del fondo: entero arriba del todo y cada vez más bajo según se baja, hasta la franja.
+  function apretar() {
+    if (!aprieta) return;
+    var h = Math.max(altoMin, Math.min(altoMax, Math.round(fondo.getBoundingClientRect().bottom - mesa.getBoundingClientRect().top) - 14));
+    if (h === altoAhora) return;
+    altoAhora = h;
+    tablero.style.height = h + 'px';
+    prieto = (altoMax - h) / Math.max(1, altoMax - altoMin);
+    tablero.style.setProperty('--apretado', prieto.toFixed(3));
+    fy = Math.min(1, h / 440);
+    if (atado && !lioEnMarcha) { prepararLio(); poner(1); }
+    else if (!lioEnMarcha) { medir(false); tramos.forEach(trazar); trazarSuelto(); }
+  }
+  function mirar() {
+    mirando = false;
+    if (raiz.classList.contains('en-tabla')) return;
+    apretar();
+    var vh = window.innerHeight, elegido = null, i;
+    var borde = enAncho.matches ? 0 : Math.max(0, Math.min(fondo.getBoundingClientRect().bottom, vh * .6));
+    var linea = lineaDe(vh, borde);
+    // En el último tramo de la página la línea baja hasta el borde de abajo, para que los últimos bloques
+    // también se lean sin dejar una franja vacía al final.
+    var max = document.documentElement.scrollHeight - vh, tramo = tramoFinal(vh, linea, max), quedan = max - window.pageYOffset;
+    if (quedan < tramo) linea += (vh - linea) * (1 - Math.max(0, quedan) / tramo);
+    for (i = 0; i < bloques.length; i++) { if (bloques[i].getBoundingClientRect().top <= linea) elegido = bloques[i]; else break; }
+    if (forzado) { if (Math.abs(window.pageYOffset - yForzado) <= 30 || Date.now() - tForzado < 1500) elegido = forzado; else forzado = null; }
+    if (elegido !== bloqueActivo) {
+      if (bloqueActivo) bloqueActivo.classList.remove('activo');
+      bloqueActivo = elegido;
+      if (elegido) elegido.classList.add('activo');
+      estado = elegido ? leerEstado(elegido) : { tipo: 'todo' };
+      pintar();
+    }
+    if (atado && !lioEnMarcha && window.pageYOffset > 40) desatar();   // al empezar a bajar, se ordena solo
+  }
+  function alMover() { if (!mirando) { mirando = true; requestAnimationFrame(mirar); } }
+  // Lleva hasta un bloque: lo más arriba posible sin que el siguiente llegue a cruzar la línea.
+  function irA(ver) {
+    var b = document.querySelector('.bloque[data-ver="' + ver + '"]');
+    if (!b) return;
+    var vh = window.innerHeight, r = b.getBoundingClientRect(), borde = fijoAbajo(vh), linea = lineaDe(vh, borde);
+    var arriba = Math.max(borde + 12, linea - r.height + 6);   // el bloque acaba 6 px por debajo de la línea: el siguiente, pegado a él en la rejilla o el recorrido, no llega a cruzarla
+    var destino = Math.max(0, r.top + window.pageYOffset - arriba), max = document.documentElement.scrollHeight - vh;
+    // Cerca del final la página no baja lo bastante para que el bloque cruce la línea: ese bloque manda hasta que se vuelva a subir.
+    forzado = destino > max - tramoFinal(vh, linea, max) ? b : null;
+    yForzado = Math.min(destino, max); tForzado = Date.now();
+    window.scrollTo({ top: destino, behavior: quieto ? 'auto' : 'smooth' });
+    alMover();
+  }
+  function tramoFinal(vh, linea, max) { return Math.max(1, Math.min(vh - linea, max)); }
+  var forzado = null, yForzado = 0, tForzado = 0;
+  // Medidas que dependen de la pantalla: si el tablero se aplasta y entre qué altos.
+  function ajustarAlto() {
+    var vh = window.innerHeight;
+    aprieta = !enAncho.matches && getComputedStyle(fondo).position.indexOf('sticky') > -1;
+    altoMin = parseFloat(getComputedStyle(raiz).getPropertyValue('--alto-min')) || 190;
+    altoMax = aprieta ? fondo.offsetHeight - 14 : 0;
+    altoAhora = -1;
+    if (aprieta) apretar(); else { prieto = 0; tablero.style.height = ''; tablero.style.removeProperty('--apretado'); }
+    raiz.style.setProperty('--alto-fijo', fijoAbajo(vh) + 'px');
+  }
+
+  crear();
+  ajustarAlto();
+  dibujar();
+  sitios.forEach(function (el) {
+    el.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      if (!atado) irA('sitio:' + el.getAttribute('data-sitio'));
+    });
+  });
+  tapa.addEventListener('click', desatar);
+  // Al abrir una aptitud o un paso se cierran los demás de su grupo y se lleva a la línea de lectura,
+  // para que el tablero encienda su hilo o sus sitios.
+  var plegables = [].slice.call(document.querySelectorAll('.relato details'));
+  plegables.forEach(function (d) {
+    d.addEventListener('toggle', function () {
+      if (!d.open) return;
+      plegables.forEach(function (o) { if (o !== d && o.getAttribute('name') === d.getAttribute('name')) o.open = false; });
+      irA(d.parentNode.getAttribute('data-ver'));
+    });
+  });
+  // El nombre de cada sitio en las frases que se abren lleva a su ficha, como las chinchetas del tablero.
+  // La página lleva ella misma el desplazamiento (scrollRestoration manual), así que guarda dónde estaba
+  // para que volver atrás, con el gesto del móvil, devuelva a la frase en vez de sacar de la web.
+  [].forEach.call(document.querySelectorAll('.relato details a[href^="#"]'), function (a) {
+    a.addEventListener('click', function (ev) {
+      var id = a.getAttribute('href').slice(1);
+      ev.preventDefault();
+      try { history.replaceState({ y: window.pageYOffset }, ''); history.pushState({ sitio: id }, '', '#' + id); } catch (e) {}
+      irA('sitio:' + id);
+    });
+  });
+  window.addEventListener('popstate', function (ev) {
+    var e = ev.state || {};
+    if (typeof e.y === 'number') { forzado = null; window.scrollTo({ top: e.y, behavior: quieto ? 'auto' : 'smooth' }); }
+    else if (e.sitio) irA('sitio:' + e.sitio);
+  });
+  window.addEventListener('scroll', alMover, { passive: true });
+
+  // La foto: al tocarla sale una copia grande y nítida hacia el centro; otro toque la devuelve a su sitio.
+  var retrato = document.getElementById('retrato'), ampliada = document.getElementById('ampliada'), telon = document.getElementById('telon');
+  var fotoGrande = ampliada.querySelector('img'), grande = false, relojFoto = null, yFoto = 0;
+  function alDesplazar() { if (Math.abs(window.pageYOffset - yFoto) > 40) cerrarFoto(); }
+  var fotoPequena = retrato.querySelector('img');
+  function marcoProporcional() {
+    var proporcion = parseFloat(getComputedStyle(fotoPequena).borderTopWidth) / fotoPequena.offsetWidth;
+    fotoGrande.style.borderWidth = (proporcion * ampliada.offsetWidth).toFixed(1) + 'px';
+  }
+  function desdeLaPequena() {
+    var p = fotoPequena.getBoundingClientRect();
+    var s = fotoPequena.offsetWidth / fotoGrande.offsetWidth;
+    var d = (ampliada.offsetHeight - fotoGrande.offsetHeight) / 2;   // la foto queda por encima del centro de la figura (el pie va debajo)
+    var giro = 3 * Math.PI / 180;
+    var x = p.left + p.width / 2 - document.documentElement.clientWidth / 2 - s * d * Math.sin(giro);
+    var y = p.top + p.height / 2 - document.documentElement.clientHeight / 2 + s * d * Math.cos(giro);
+    return 'translate(-50%, -50%) translate(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px) scale(' + s.toFixed(5) + ') rotate(3deg)';
+  }
+  function abrirFoto() {
+    if (grande) return;
+    grande = true;
+    clearTimeout(relojFoto);
+    ampliada.classList.remove('cerrando', 'fundida');
+    if (!fotoGrande.getAttribute('src')) fotoGrande.src = 'jorge-grande.jpg';
+    telon.hidden = false; ampliada.hidden = false;
+    marcoProporcional();
+    ampliada.style.transition = 'none';
+    ampliada.style.transform = desdeLaPequena();
+    void ampliada.offsetWidth;
+    ampliada.style.transition = '';
+    ampliada.style.transform = '';
+    telon.classList.add('visto');
+    retrato.classList.add('fuera');
+    retrato.setAttribute('aria-expanded', 'true');
+    ampliada.focus({ preventScroll: true });
+    yFoto = window.pageYOffset;
+    window.addEventListener('scroll', alDesplazar, { passive: true });
+  }
+  function cerrarFoto() {
+    if (!grande) return;
+    grande = false;
+    window.removeEventListener('scroll', alDesplazar);
+    var destino = desdeLaPequena();
+    void ampliada.offsetWidth;
+    ampliada.classList.add('cerrando');
+    ampliada.style.transform = destino;
+    telon.classList.remove('visto');
+    retrato.setAttribute('aria-expanded', 'false');
+    clearTimeout(relojFoto);
+    // En el último tramo del viaje la copia grande se funde con la pequeña, en vez de cambiarse de golpe
+    relojFoto = setTimeout(function () {
+      if (grande) return;
+      retrato.classList.remove('fuera');
+      ampliada.classList.add('fundida');
+      relojFoto = setTimeout(function () {
+        if (grande) return;
+        ampliada.hidden = true; telon.hidden = true; ampliada.style.transform = '';
+        ampliada.classList.remove('cerrando', 'fundida');
+        if (document.activeElement === ampliada || document.activeElement === document.body) retrato.focus({ preventScroll: true });
+      }, quieto ? 0 : 140);
+    }, quieto ? 0 : 560);
+  }
+  function teclaFoto(ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); if (grande) cerrarFoto(); else abrirFoto(); } }
+  retrato.addEventListener('click', abrirFoto);
+  retrato.addEventListener('keydown', teclaFoto);
+  ampliada.addEventListener('click', cerrarFoto);
+  ampliada.addEventListener('keydown', teclaFoto);
+  telon.addEventListener('click', cerrarFoto);
+  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') cerrarFoto(); });
+  window.addEventListener('load', function () { setTimeout(function () { if (!fotoGrande.getAttribute('src')) fotoGrande.src = 'jorge-grande.jpg'; }, 1200); });
+
+  // Vista en tabla: el mismo contenido como un libro de hojas de cálculo, con una pestaña por parte.
+  var hoja = document.getElementById('hoja');
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function limpio(n) { return esc(n.textContent.replace(/\s+/g, ' ').trim().replace(/\.$/, '')); }
+  function fila(clase, a, b, ancha) {
+    return '<tr' + (clase ? ' class="' + clase + '"' : '') + '><th class="n"></th>' + (ancha ? '<td colspan="2">' + b + '</td>' : '<td>' + a + '</td><td>' + b + '</td>') + '</tr>';
+  }
+  var hojaActual = 'aptitudes';
+  function construirHoja() {
+    function ficha(id) {
+      var fi = document.getElementById(id), cargo = fi.querySelector('.cargo');
+      if (cargo) { cargo = cargo.cloneNode(true); [].forEach.call(cargo.querySelectorAll('.cuando'), function (c) { cargo.removeChild(c); }); }
+      return fila('grupo', esc(fi.getAttribute('data-fecha') || ''), limpio(fi.querySelector('h3')) + (cargo ? '. ' + limpio(cargo) : '') + '.') +
+        [].map.call(fi.querySelectorAll('li'), function (li) { return fila('', '', limpio(li) + '.'); }).join('') +
+        [].map.call(fi.querySelectorAll('.enlaces a'), function (a) { return fila('', '', '<a href="' + esc(a.getAttribute('href')) + '">' + limpio(a) + '</a>'); }).join('');
+    }
+    // Un paso o una aptitud: fila de título y, debajo, una fila por sitio con su frase.
+    function grupo(b, titulo) {
+      return fila('grupo', '', titulo, true) + [].map.call(b.querySelectorAll('p'), function (parrafo) {
+        var sitio = parrafo.querySelector('b');
+        if (!sitio) return fila('nota', '', esc(parrafo.textContent.replace(/\s+/g, ' ').trim()), true);
+        return fila('', limpio(sitio), esc(parrafo.textContent.replace(sitio.textContent, '').replace(/\s+/g, ' ').trim()));
+      }).join('');
+    }
+    function todos(sel, titulo) { return [].map.call(document.querySelectorAll(sel), function (b, i) { return grupo(b, titulo(b, i)); }).join(''); }
+    var hojas = {
+      experiencia: fila('cab', 'Cuándo', 'Dónde y qué') + fila('seccion', '', 'Experiencia', true) + ficha('iti') + ficha('pokeshop') + ficha('numer1ca'),
+      trabajo: fila('cab', 'Dónde', 'Qué') + fila('seccion', '', 'Cómo trabajo', true) +
+        todos('.bloque.etapa', function (b, i) { return (i + 1) + '. ' + limpio(b.querySelector('h3')); }),
+      aptitudes: fila('cab', 'Aptitud', 'Dónde la he aplicado') + fila('seccion', '', 'Qué sé hacer', true) +
+        [].map.call(document.querySelectorAll('.bloque.hebra'), function (b) {
+          return fila('apt', limpio(b.querySelector('h3')), [].map.call(b.querySelectorAll('p'), function (p) {
+            var s = p.querySelector('b');
+            return '<b>' + (s ? limpio(s) : '') + ':</b> ' + esc(p.textContent.replace(s ? s.textContent : '', '').replace(/\s+/g, ' ').trim());
+          }).join('<br>'));
+        }).join(''),
+      formacion: fila('cab', 'Cuándo', 'Dónde y qué') + fila('seccion', '', 'Formación, certificaciones e idiomas', true) + ['dam', 'derecho', 'cursos', 'datos'].map(ficha).join('') +
+        fila('seccion', '', 'Proyectos propios', true) + ficha('aoe2radar') + ficha('cordel')
+    };
+    hoja.querySelector('table').insertAdjacentHTML('beforeend', Object.keys(hojas).map(function (id) {
+      return '<tbody data-hoja="' + id + '"' + (id === hojaActual ? '' : ' hidden') + '>' + hojas[id] + fila('grupo', 'Contacto', '<a href="mailto:jorge@jorgeguardiola.es">jorge@jorgeguardiola.es</a>') + '</tbody>';
+    }).join(''));
+  }
+  function ponerHoja(id) {
+    hojaActual = id;
+    [].forEach.call(hoja.querySelectorAll('tbody'), function (t) { t.hidden = t.getAttribute('data-hoja') !== id; });
+    [].forEach.call(hoja.querySelectorAll('.pestana'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-hoja') === id ? 'true' : 'false'); });
+    hoja.scrollIntoView({ block: 'start' });   // cada hoja empieza por su primera fila
+  }
+  [].forEach.call(hoja.querySelectorAll('.pestana'), function (b) {
+    b.addEventListener('click', function () { ponerHoja(b.getAttribute('data-hoja')); });
+  });
+  function ponerVista(tabla) {
+    if (tabla && !hoja.querySelector('tbody')) construirHoja();
+    raiz.classList.toggle('en-tabla', tabla);
+    hoja.hidden = !tabla;
+    if (tabla) { hoja.scrollIntoView({ block: 'start' }); hoja.querySelector('.cambio').focus({ preventScroll: true }); }
+    else { window.scrollTo(0, 0); recolocar(); document.querySelector('.atajo .cambio').focus({ preventScroll: true }); }
+  }
+  [].forEach.call(document.querySelectorAll('.cambio'), function (c) {
+    c.addEventListener('click', function () { ponerVista(c.getAttribute('data-vista') === 'tabla'); });
+  });
+
+  function recolocar() {
+    if (raiz.classList.contains('en-tabla')) return;
+    ajustarAlto();
+    if (atado && !lioEnMarcha) { prepararLio(); poner(1); empezarAMecer(); } else if (!enLio) dibujar();
+    alMover();
+  }
+  var rs = null;
+  window.addEventListener('resize', function () { cerrarFoto(); clearTimeout(rs); rs = setTimeout(recolocar, 120); });
+
+  // Arranque: enredado y esperando; con movimiento reducido, ya en su sitio.
+  if (quieto) pintar();
+  else {
+    atar();
+    var contarSola = function () {
+      setTimeout(function () { if (!atado || lioEnMarcha) return; if (document.hidden) esperarVista(); else desatar(); }, 10000);
+    };
+    var esperarVista = function () {
+      var una = function () { if (!document.hidden) { document.removeEventListener('visibilitychange', una); contarSola(); } };
+      document.addEventListener('visibilitychange', una);
+    };
+    if (document.hidden) esperarVista(); else contarSola();
+  }
+  mirar();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(recolocar);
+})();
+</script>
+</body>
+</html>

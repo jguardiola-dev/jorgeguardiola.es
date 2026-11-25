@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cordel · lo que copias, colgado en el borde de la pantalla</title>
+<meta name="description" content="Cordel es una cuerda escondida en el borde de la pantalla de Windows donde se cuelgan solas tus capturas y lo que copias. Gratis, ligera y sin conexión.">
+<meta name="theme-color" content="#17191d">
+<meta property="og:title" content="Cordel">
+<meta property="og:description" content="Una cuerda en el borde de la pantalla donde se cuelgan solas tus capturas y lo que copias. Para Windows 10 y 11.">
+<meta property="og:image" content="https://jguardiola-dev.github.io/Cordel/img/cordel.png">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/png" sizes="32x32" href="img/icono-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="img/icono-64.png">
+<link rel="apple-touch-icon" href="img/icono-180.png">
+<link rel="preload" href="fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Bricolage Grotesque";font-style:normal;font-weight:400 800;font-display:swap;src:url(fonts/bricolage-grotesque-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+:root{
+  --noche:#17191d; --escritorio:#1c2027; --barra:#101318; --hueso:#f2efe8; --flojo:#bdb9b0; --tenue:#9ba0a8;
+  --hilo:#e0482b; --papel:#fbf7ec; --nota:#f6dd7a; --enlace:#b9dcf5; --filo:#3a404b;
+  --letra:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --ancho:1180px; --margen:clamp(20px,5vw,72px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--noche);color:var(--hueso);font-family:var(--letra);font-size:18px;line-height:1.55;-webkit-text-size-adjust:100%;scrollbar-color:#4a505a var(--noche);accent-color:var(--hilo);scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{min-height:100vh}
+::selection{background:var(--hilo);color:#fff}
+a{color:inherit;text-decoration-color:rgba(224,72,43,.7);text-decoration-thickness:1.5px;text-underline-offset:.22em}
+a:hover{text-decoration-color:var(--hilo)}
+:focus-visible{outline:2px solid var(--hilo);outline-offset:3px;border-radius:6px}
+img{display:block;max-width:100%;height:auto}
+.salto{position:absolute;left:-9999px;top:8px;background:var(--hueso);color:var(--noche);padding:10px 16px;border-radius:8px;z-index:20}
+.salto:focus{left:16px}
+
+/* ── el escritorio ── */
+.escena{position:relative;min-height:clamp(680px,100svh,1000px);background:radial-gradient(120% 90% at 18% 115%,#2a303a 0,var(--escritorio) 62%);overflow:hidden;isolation:isolate}
+.cabecera{position:relative;z-index:5;display:flex;align-items:center;gap:clamp(18px,3vw,40px);padding:26px var(--margen) 0;padding-right:calc(var(--margen) + 250px);font-size:16px}
+.marca{display:flex;align-items:center;gap:12px;font-weight:800;font-size:21px;letter-spacing:-.01em;text-decoration:none;margin-right:auto}
+.marca img{width:26px;height:26px}
+.cabecera a:not(.marca){color:var(--flojo);text-decoration:none}
+.cabecera a:not(.marca):hover{color:var(--hueso)}
+.portada{position:relative;z-index:4;padding:clamp(80px,15vh,170px) var(--margen) 140px;max-width:860px}
+h1{font-size:clamp(48px,7.2vw,96px);line-height:.98;font-weight:800;letter-spacing:-.035em;text-wrap:balance}
+h1 em{font-style:normal;color:var(--hilo)}
+.entrada{margin-top:28px;font-size:clamp(19px,1.6vw,22px);line-height:1.5;color:#d4d0c8;max-width:34ch}
+.acciones{margin-top:40px;display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.boton{display:inline-flex;align-items:center;gap:10px;padding:17px 26px;border-radius:10px;font-weight:700;font-size:17px;text-decoration:none;transition:background-color .15s,border-color .15s,transform .15s}
+.boton svg{width:18px;height:18px;flex:none}
+.boton.principal{background:var(--hueso);color:var(--noche)}
+.boton.principal:hover{background:#fff}
+.boton.segundo{border:1.4px solid #4e5561;color:var(--hueso);font-weight:500;padding:16px 22px}
+.boton.segundo:hover{border-color:var(--hueso)}
+.boton:active{transform:translateY(1px)}
+.requisitos{margin-top:22px;font-size:15px;color:var(--tenue)}
+
+/* la cuerda (la de la app, de ejemplo) */
+.cuerda{position:absolute;z-index:3;top:0;right:clamp(28px,8vw,150px);width:200px;height:calc(100% - 48px)}
+.borde{position:absolute;z-index:2;top:0;right:0;bottom:48px;width:clamp(240px,26vw,420px)}
+.cabo{position:absolute;z-index:3;top:6px;right:-11px;width:24px;height:24px;border:2.4px solid var(--hilo);border-radius:50%;background:none;cursor:pointer}
+.cabo::before{content:"";position:absolute;inset:-12px}
+.cabo:focus-visible{outline-offset:2px}
+.cabo:hover{background:rgba(224,72,43,.18)}
+.hilo{position:absolute;z-index:2;top:28px;right:0;width:2.4px;height:calc(100% - 28px);background:var(--hilo);transform-origin:top;transition:transform .55s cubic-bezier(.2,.9,.2,1)}
+.pastilla{position:absolute;top:42px;right:-4px;height:30px;padding:0 14px;display:flex;align-items:center;gap:15px;border-radius:15px;background:#1b1d21;border:1.4px solid rgba(255,255,255,.58);font-size:13px;color:#e9e6df;transition:opacity .3s,transform .5s cubic-bezier(.16,1,.3,1)}
+.pastilla svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:1.6}
+.papel{position:absolute;right:-6px;width:184px;transform:rotate(var(--r,0deg));transform-origin:100% 0;box-shadow:0 7px 14px rgba(0,0,0,.42),0 1px 2px rgba(0,0,0,.4);transition:transform .8s cubic-bezier(.22,1.35,.42,1) var(--d,0s),opacity .25s linear var(--d,0s)}
+.papel:hover{transform:rotate(var(--r,0deg)) scale(1.035);transition:transform .12s ease-out 0s}
+.captura{background:#fff;padding:7px;height:126px}
+.captura .web{position:relative;height:100%;background:#eef0f3;overflow:hidden}
+.captura .web i{position:absolute;display:block}
+.nota{background:var(--nota);color:#2b2615;padding:12px 14px;font-size:14px;line-height:1.35}
+.enlace{background:var(--enlace);color:#13324a;padding:12px 14px;font-size:14px;line-height:1.35;overflow-wrap:anywhere}
+.nota b,.enlace b{display:block;font-weight:700}
+.recogida .hilo{transform:scaleY(0);transition-duration:.35s}
+.recogida .papel{transform:translateY(calc(-1 * var(--y) - 220px)) rotate(0deg);opacity:0;transition:transform .4s cubic-bezier(.5,0,.8,.4),opacity .2s linear .2s}
+.recogida .pastilla{opacity:0;transform:translateY(-60px)}
+.barra{position:absolute;z-index:4;left:0;right:0;bottom:0;height:48px;background:var(--barra);display:flex;align-items:center;gap:8px;padding:0 14px}
+.reloj{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:13px;color:#c9c5bd;font-variant-numeric:tabular-nums}
+.reloj img{width:16px;height:16px}
+
+/* ── el resto de la página ── */
+main{background:var(--noche)}
+.tramo{max-width:var(--ancho);margin:0 auto;padding:clamp(80px,11vw,150px) var(--margen) 0}
+h2{font-size:clamp(34px,4.4vw,56px);line-height:1.04;font-weight:800;letter-spacing:-.03em;text-wrap:balance;max-width:18ch}
+.tramo>p.lead{margin-top:20px;font-size:21px;color:#d4d0c8;max-width:52ch}
+.prueba{margin-top:52px;border-radius:12px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.4);border:1px solid #2a2f37}
+.pie-foto{margin-top:14px;font-size:15px;color:var(--tenue)}
+.lista{margin-top:56px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 64px;list-style:none}
+.lista li{position:relative;padding-left:34px;max-width:46ch;color:#cfcbc3}
+.lista li::before{content:"";position:absolute;left:0;top:.72em;width:18px;height:2.4px;background:var(--hilo);transform:rotate(-8deg)}
+.lista strong{color:var(--hueso);font-weight:700}
+.pasos{margin-top:48px;list-style:none;counter-reset:paso;max-width:760px}
+.pasos li{counter-increment:paso;display:grid;grid-template-columns:56px 1fr;gap:0 18px;padding:22px 0;border-top:1px solid #2b3038;color:#cfcbc3}
+.pasos li:last-child{border-bottom:1px solid #2b3038}
+.pasos li::before{content:counter(paso);font-weight:800;font-size:30px;line-height:1;color:var(--hilo);font-variant-numeric:tabular-nums}
+.pasos strong{color:var(--hueso)}
+code{font-family:Consolas,"Cascadia Mono",monospace;font-size:.88em;background:#23272e;padding:1px 6px;border-radius:5px;overflow-wrap:anywhere}
+kbd{font-family:var(--letra);font-size:.86em;font-weight:700;padding:1px 7px;border:1px solid #4a505a;border-bottom-width:2px;border-radius:5px;color:var(--hueso);white-space:nowrap}
+.claro{margin-top:64px;display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:48px;align-items:center}
+.claro p{color:#cfcbc3;max-width:34ch}
+.claro img{border-radius:10px;box-shadow:0 24px 50px rgba(0,0,0,.4)}
+
+/* descargar: dos papeles cosidos a un hilo */
+.tendido{position:relative;margin-top:70px;padding-top:34px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(24px,4vw,56px)}
+.tendido::before{content:"";position:absolute;left:-40px;right:-40px;top:20px;height:2.4px;background:var(--hilo);transform:rotate(-.6deg)}
+.hoja{position:relative;color:#1b1d21;padding:40px 36px 34px;box-shadow:0 14px 30px rgba(0,0,0,.45),0 2px 3px rgba(0,0,0,.35)}
+.hoja::before{content:"";position:absolute;top:-16px;left:28px;width:2.4px;height:30px;background:var(--hilo)}
+.hoja.blanca{background:var(--papel);transform:rotate(-.9deg)}
+.hoja.amarilla{background:var(--nota);color:#2b2615;transform:rotate(.7deg)}
+.hoja h3{font-size:28px;line-height:1.1;font-weight:800;letter-spacing:-.02em}
+.hoja .archivo{margin-top:6px;font-size:15px;opacity:.75}
+.hoja p{margin-top:16px;font-size:17px}
+.hoja .boton{margin-top:26px;background:#1b1d21;color:var(--papel)}
+.hoja .boton:hover{background:#000}
+.hoja.amarilla .boton{color:var(--nota)}
+.notas{margin-top:56px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 48px;font-size:16px;color:#bdb9b0}
+.notas h3{font-size:18px;color:var(--hueso);margin-bottom:6px;font-weight:700}
+.cifras{margin-top:44px;max-width:760px;border-top:1.4px solid var(--hueso)}
+.cifras div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;padding:15px 0;border-bottom:1px solid #2b3038}
+.cifras dt{color:var(--flojo)}
+.cifras dd{font-weight:700;font-variant-numeric:tabular-nums}
+.medido{margin-top:14px;font-size:15px;color:var(--tenue)}
+footer{max-width:var(--ancho);margin:clamp(90px,12vw,160px) auto 0;padding:48px var(--margen) 64px;border-top:1px solid #2b3038;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:40px;font-size:16px;color:var(--flojo)}
+footer p+p{margin-top:12px}
+footer ul{list-style:none;display:grid;gap:8px;align-content:start}
+footer .firma{display:flex;align-items:center;gap:10px;color:var(--hueso);font-weight:700}
+footer .firma img{width:20px;height:20px}
+
+@media (max-width:900px){
+  .cabecera{padding-right:var(--margen)}
+  .cabecera a:not(.marca){display:none}
+  .portada{padding:56px var(--margen) 24px}
+  .cuerda{position:relative;right:auto;margin:0 28px 0 auto;height:590px;width:170px}
+  .solo-ancho{display:none}
+  .borde{display:none}
+  .papel{width:156px}
+  .captura{height:108px}
+  .escena{min-height:0;padding-bottom:48px}
+  .lista,.notas,.tendido,.claro,footer{grid-template-columns:minmax(0,1fr)}
+  .tendido{gap:48px}
+  .tendido::before{display:none}
+}
+@media (prefers-reduced-motion:reduce){.papel,.hilo,.pastilla{transition:none!important}}
+</style>
+</head>
+<body>
+<a class="salto" href="#contenido">Saltar al contenido</a>
+
+<div class="escena">
+  <header class="cabecera">
+    <a class="marca" href="./" aria-label="Cordel, inicio"><img src="img/icono-64.png" alt="" width="26" height="26">Cordel</a>
+    <a href="#que-hace">Qué hace</a>
+    <a href="#como-se-usa">Cómo se usa</a>
+    <a href="#descargar">Descargar</a>
+  </header>
+
+  <section class="portada" aria-labelledby="titulo">
+    <h1 id="titulo">Lo que copias se queda <em>colgado</em>.</h1>
+    <p class="entrada">Una cuerda escondida en el borde de la pantalla. Acerca el ratón y cae con tus capturas y todo lo que has copiado; apártalo y se recoge.</p>
+    <div class="acciones">
+      <a class="boton principal" href="https://github.com/jguardiola-dev/Cordel/releases/latest/download/Cordel-instalar.exe"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 3v10m0 0-4-4m4 4 4-4M4 16h12"/></svg>Descargar e instalar</a>
+      <a class="boton segundo" href="https://github.com/jguardiola-dev/Cordel/releases/latest/download/Cordel.exe">Cordel.exe, sin instalar</a>
+    </div>
+    <p class="requisitos">Windows 10 y 11 de 64 bits · 2 MB · gratis, sin cuentas y sin conexión</p>
+  </section>
+
+  <div class="borde" aria-hidden="true"></div>
+  <div class="cuerda" id="cuerda">
+    <button class="cabo" type="button" aria-controls="cuerda" aria-expanded="true" aria-label="Ver u ocultar la cuerda de ejemplo"></button>
+    <span class="hilo" aria-hidden="true"></span>
+    <div class="pastilla" aria-hidden="true">
+      <svg viewBox="0 0 14 14"><circle cx="6" cy="6" r="4"/><path d="M9 9l3.5 3.5"/></svg>
+      <svg viewBox="0 0 14 14"><path d="M4 2h6M5 2v5l-2 2h8L9 7V2M7 9v4"/></svg>
+      <svg viewBox="0 0 14 14"><circle cx="3.5" cy="10.5" r="2"/><circle cx="10.5" cy="10.5" r="2"/><path d="M5 9l6-7M9 9L3 2"/></svg>
+      <svg viewBox="0 0 14 14"><path d="M2 3.5h10M5 3.5V2h4v1.5M3.5 3.5l.7 9h5.6l.7-9"/></svg>
+      <span>6</span>
+    </div>
+    <div aria-hidden="true">
+      <div class="papel captura" style="top:86px;--y:86px;--r:-1.2deg;--d:.05s"><div class="web"><i style="left:10px;right:44px;top:12px;height:9px;background:#1f2229"></i><i style="left:10px;top:30px;width:58%;height:6px;background:#a6abb4"></i><i style="right:10px;top:12px;width:42px;height:40px;background:#dde7fb"></i><i style="left:10px;top:64px;width:40px;height:12px;border-radius:6px;background:#2563eb"></i></div></div>
+      <div class="papel enlace" style="top:226px;--y:226px;--r:.8deg;--d:.12s"><b>es.wikipedia.org</b>/wiki/Literatura_de_cordel</div>
+      <div class="papel captura" style="top:304px;--y:304px;--r:-.6deg;--d:.19s"><div class="web"><i style="left:10px;right:30px;top:14px;height:8px;background:#1f2229"></i><i style="left:10px;top:30px;width:70%;height:5px;background:#a6abb4"></i><i style="left:10px;top:40px;width:52%;height:5px;background:#a6abb4"></i><i style="left:10px;right:10px;top:58px;height:46px;background:#dfe3e9"></i></div></div>
+      <div class="papel nota" style="top:446px;--y:446px;--r:1.1deg;--d:.26s"><b>Para la reunión del jueves…</b>presupuesto, confirmar la sala, llevar el portátil</div>
+      <div class="papel captura solo-ancho" style="top:574px;--y:574px;--r:-1deg;--d:.33s"><div class="web" style="background:#1f2229"><i style="left:10px;top:12px;width:70px;height:6px;background:#e07a5f"></i><i style="left:22px;top:24px;width:96px;height:6px;background:#7ec4b5"></i><i style="left:22px;top:36px;width:60px;height:6px;background:#c3a6e0"></i><i style="left:10px;top:48px;width:110px;height:6px;background:#e9c46a"></i><i style="left:22px;top:60px;width:80px;height:6px;background:#7ec4b5"></i></div></div>
+      <div class="papel nota solo-ancho" style="top:716px;--y:716px;--r:.5deg;--d:.4s;background:#cfe8b5;color:#20321a"><b>Matrícula del coche</b>1234 ABC</div>
+    </div>
+  </div>
+
+  <div class="barra" aria-hidden="true"><span class="reloj"><img src="img/icono-32.png" alt="" width="16" height="16"><span>16:42</span></span></div>
+</div>
+
+<main id="contenido">
+  <section class="tramo" id="que-hace" aria-labelledby="t-que-hace">
+    <h2 id="t-que-hace">Lo reciente, siempre a mano.</h2>
+    <p class="lead">Cordel guarda lo último que copias y capturas en un hilo que solo aparece cuando lo buscas. Lo demás del tiempo, ni se ve ni gasta.</p>
+    <figure>
+      <img class="prueba" src="img/cordel.png" width="1500" height="860" alt="La cuerda de Cordel colgando del borde izquierdo con dos enlaces, tres capturas y una nota, y a su lado el editor de capturas con una flecha, un rectángulo, un número y un texto dibujados.">
+      <figcaption class="pie-foto">La cuerda abierta y el editor de capturas. Datos de ejemplo.</figcaption>
+    </figure>
+    <ul class="lista">
+      <li><strong>Se cuelga sola.</strong> Lo que copias (texto, enlaces, imágenes) y las capturas de pantalla nuevas.</li>
+      <li><strong>Un clic lo vuelve a copiar.</strong> Arrastrándolo, lo llevas a otro programa.</li>
+      <li><strong>Busca en todo.</strong> En las notas, los enlaces y el texto que aparece en las capturas, que lee el propio equipo sin enviarlo a ningún sitio.</li>
+      <li><strong>Editor de capturas.</strong> Flechas, líneas, rectángulos, texto, números de paso, lápiz, resaltador, pixelar y recortar. La original no se pierde: puedes volver a ella. Por eso mismo, pixelar tapa la copia que sale de Cordel, no el archivo original.</li>
+      <li><strong>Anuda, corta, sacude.</strong> Anuda lo que quieres conservar, corta con las tijeras una parte, o sacude el hilo para descolgar todo lo que no esté anudado. <kbd>Ctrl</kbd>+<kbd>Z</kbd> lo devuelve.</li>
+      <li><strong>Donde la quieras.</strong> En el borde izquierdo, derecho o de arriba, en el monitor que elijas, y si quieres, siempre a la vista.</li>
+      <li><strong>Respeta lo privado.</strong> No cuelga lo que los programas marcan como confidencial, y puedes excluir los que quieras, como tu gestor de contraseñas.</li>
+      <li><strong>Sin conexión.</strong> Nada sale de tu equipo. No hay cuentas ni telemetría.</li>
+    </ul>
+  </section>
+
+  <section class="tramo" id="como-se-usa" aria-labelledby="t-como">
+    <h2 id="t-como">Cómo se usa</h2>
+    <ol class="pasos">
+      <li><span><strong>Abre la cuerda</strong> tocando con el ratón el cabo que asoma en el borde, o con el atajo de buscar (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Espacio</kbd>; si otro programa ya lo usa, Cordel coge otro y te dice cuál en el menú de su icono).</span></li>
+      <li><span><strong>Copia algo colgado</strong> con un clic, o arrástralo a otro programa.</span></li>
+      <li><span><strong>Míralo en grande</strong> con doble clic. Con una captura, la tecla <kbd>E</kbd> abre el editor.</span></li>
+      <li><span><strong>Usa los botones de la cuerda</strong> para buscar, dejarla a la vista, cortar con las tijeras o vaciarla.</span></li>
+      <li><span><strong>Ajústala</strong> desde su icono junto al reloj: el borde, qué se cuelga, la carpeta de capturas, el atajo, los programas excluidos, arrancar con Windows y los colores.</span></li>
+    </ol>
+    <div class="claro">
+      <img src="img/claro.png" width="960" height="507" loading="lazy" alt="Cordel con el tema claro: la cuerda con un enlace y dos capturas, y la ventana de Ajustes con sus opciones.">
+      <p>Claro u oscuro, como tengas Windows. También se puede elegir en sus Ajustes.</p>
+    </div>
+  </section>
+
+  <section class="tramo" id="descargar" aria-labelledby="t-descargar">
+    <h2 id="t-descargar">Descárgala</h2>
+    <p class="lead">Es gratis. Elige una de las dos formas; las dos son el mismo programa.</p>
+    <div class="tendido">
+      <article class="hoja blanca">
+        <h3>Instalada</h3>
+        <p class="archivo">Cordel-instalar.exe</p>
+        <p>La deja en tu usuario, sin pedir permisos de administrador, con su entrada en el menú Inicio y su desinstalador.</p>
+        <a class="boton" href="https://github.com/jguardiola-dev/Cordel/releases/latest/download/Cordel-instalar.exe">Descargar e instalar</a>
+      </article>
+      <article class="hoja amarilla">
+        <h3>Sin instalar</h3>
+        <p class="archivo">Cordel.exe · 2,0 MB</p>
+        <p>Un solo archivo: se abre con doble clic y ya está en marcha. Lo que cuelgas se guarda igual en tu usuario.</p>
+        <a class="boton" href="https://github.com/jguardiola-dev/Cordel/releases/latest/download/Cordel.exe">Descargar Cordel.exe</a>
+      </article>
+    </div>
+    <div class="notas">
+      <div>
+        <h3>El aviso de Windows</h3>
+        <p>Cordel no está firmada con un certificado de pago, así que la primera vez Windows puede avisar con «Windows protegió su PC». Si la has descargado de aquí, pulsa «Más información» y «Ejecutar de todas formas».</p>
+      </div>
+      <div>
+        <h3>Para quitarla</h3>
+        <p>Instalada: en Configuración → Aplicaciones, busca Cordel y pulsa Desinstalar. Sin instalar: quita antes «Arrancar con Windows» en sus Ajustes si lo pusiste, ciérrala desde su icono («Salir») y borra el archivo. Lo colgado sigue en <code>%LOCALAPPDATA%\Cordel</code> hasta que borres esa carpeta.</p>
+      </div>
+      <div>
+        <h3>Dónde funciona</h3>
+        <p>Probada en Windows 10 de 64 bits. En Windows 11 debería funcionar igual, pero todavía no se ha probado. Todas las versiones están en la <a href="https://github.com/jguardiola-dev/Cordel/releases">página de versiones</a>, con sus huellas para comprobar la descarga.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tramo" aria-labelledby="t-gasta">
+    <h2 id="t-gasta">Cuánto gasta</h2>
+    <dl class="cifras">
+      <div><dt>El programa</dt><dd>2,0 MB</dd></div>
+      <div><dt>Arranque</dt><dd>0,05 segundos</dd></div>
+      <div><dt>En reposo, con la cuerda recogida</dt><dd>0 % de procesador, 4 o 5 MB de memoria</dd></div>
+      <div><dt>Con la cuerda abierta y quieta</dt><dd>0 % de procesador</dd></div>
+      <div><dt>Con el editor abierto</dt><dd>unos 25 MB; quieto, 0 % de procesador</dd></div>
+    </dl>
+    <p class="medido">Medido el 19 de noviembre de 2026 en Windows 10, con la versión 1.0.0. El editor, con una captura de 1280 × 800.</p>
+  </section>
+</main>
+
+<footer>
+  <div>
+    <p class="firma"><img src="img/icono-32.png" alt="" width="20" height="20">Cordel, de jguardiola-dev</p>
+    <p>Gratis, sin cuentas y sin conexión: lo que cuelgas no sale de tu equipo.</p>
+  </div>
+  <ul>
+    <li><a href="https://github.com/jguardiola-dev/Cordel/releases">Versiones</a></li>
+    <li><a href="https://github.com/jguardiola-dev/Cordel/blob/main/LICENSE">Licencia</a></li>
+    <li><a href="AVISOS-DE-TERCEROS.txt">Avisos de terceros</a></li>
+    <li><a href="https://github.com/jguardiola-dev/Cordel">El repositorio en GitHub</a></li>
+  </ul>
+</footer>
+
+<script>
+(function () {
+  var cuerda = document.getElementById('cuerda');
+  var cabo = cuerda.querySelector('.cabo');
+  var borde = document.querySelector('.borde');
+  var quieta = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var espera = null;
+  function abrir() { clearTimeout(espera); cuerda.classList.remove('recogida'); cabo.setAttribute('aria-expanded', 'true'); }
+  function recoger() { cuerda.classList.add('recogida'); cabo.setAttribute('aria-expanded', 'false'); }
+  function recogerLuego() { clearTimeout(espera); espera = setTimeout(recoger, 450); }
+  cabo.addEventListener('click', function () { cuerda.classList.contains('recogida') ? abrir() : recoger(); });
+  var ancho = window.matchMedia('(min-width: 901px)');
+  // (en pantallas estrechas la cuerda va debajo del texto: al caer pasaría por encima de él, así que ya está abierta)
+  if (quieta || !ancho.matches) return;
+  // como la app: recogida al llegar, cae enseguida y se recoge al apartar el ratón del borde
+  recoger();
+  setTimeout(abrir, 650);
+  [cuerda, borde].forEach(function (z) {
+    z.addEventListener('pointerenter', function (e) { if (ancho.matches && e.pointerType !== 'touch') abrir(); });
+    z.addEventListener('pointerleave', function (e) {
+      if (!ancho.matches || e.pointerType === 'touch') return;
+      var a = e.relatedTarget;
+      if (a && (cuerda.contains(a) || a === borde)) return;
+      recogerLuego();
+    });
+  });
+})();
+</script>
+</body>
+</html>
